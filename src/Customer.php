@@ -1,7 +1,7 @@
 <?php
 namespace Bimer;
 
-use Vindi\Http\Resource;
+use Bimer\Http\Resource;
 
 class Customer extends Resource
 {
