@@ -6,8 +6,7 @@ SDK PHP para a API do Alterdata Bimer
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require 'vendor/autoload.php';//print_r($person1);
-//print_r($person2);
+require 'vendor/autoload.php';
 
 putenv('BIMER_API_URL=http://192.168.0.104:8086/api/');
 putenv('BIMER_API_ID=AmigosDoBem.nv');
