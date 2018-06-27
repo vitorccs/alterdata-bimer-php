@@ -16,15 +16,65 @@ putenv('BIMER_API_PWD=Bimer@P&Am1g');
 
 try {
     $characteristics = Bimer\PersonCharacteristic::all();   
-    $person1 = Bimer\Person::find('00A0000SQ4');
-    $person2 = Bimer\Person::find('NOTFOUND');
+    //$person1 = Bimer\Person::find('00A0000SQ4');
+    //$person2 = Bimer\Person::find('NOTFOUND');
+    /*
+    $person3 = Bimer\Customer::create([
+       'Identificador' => '',
+         'IdentificadorRepresentantePrincipal' => '',
+       'Tipo' => 'F',
+       'Codigo' => '',
+       'CpfCnpj' => '01234567894',
+       'DataNascimento' => '1980-04-26T00:00:00:000Z',
+       'Nome' => 'Nome Completo',
+       'NomeCurto' => 'Nome Curto',
+       'Enderecos' => [
+            [
+               'CEP' => '22060020',
+               'CodigoSuframa' => '',
+               'Complemento' => '',
+               'IdentificadorBairro' => '00A00001R7',
+               'IdentificadorCidade' => '00A000059E',
+               'IdentificadorTipoLogradouro' => '',
+               'InscricaoEstadual' => '',
+               'NomeLogradouro' => 'RUA LEOPOLDO MIGUEZ 99/202',
+               'NumeroLogradouro' => '',
+               'Observacao' => '11020258',
+               'PessoasContato' => [
+                [
+                   'ContatoPrincipal' => true,
+                   'Email' => 'email@globocom',
+                   'Identificador' => '',
+                   'Nome' => 'Pessoa de contato inserida pela API',
+                   'PaginaInternet' => '',
+                   'TipoCadastro' => 'I',
+                   'TelefoneCelular' => '(0021)99999-9999',
+                   'TelefoneFixo' => '(0021)11111-111',
+                ]
+              ],
+               'SiglaUnidadeFederativa' => 'RJ',
+               'TipoCadastro' => 'I',
+               'Tipos' => [
+                 'Cobranca' => true,
+                 'Comercial' => true,
+                 'Correspondencia' => true,
+                 'Entrega' => true,
+                 'Principal' => true,
+                 'Residencial' => true,
+                ],
+               'Codigo' => '01',
+            ]
+        ]
+    ]);
+    */
 } catch (\Exception $e) {
     die("Error: ". $e->getMessage() ."\n");
 }
 
 print_r($characteristics);
-print_r($person1);
-print_r($person2);
+//print_r($person1);
+//print_r($person2);
+//print_r($person3);
 
 die('Success');
 ```
