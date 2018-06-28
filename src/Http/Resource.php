@@ -16,32 +16,36 @@ abstract class Resource
 		{
 				static::setApi();
 
-				$collection = static::$api->get(null, ['query' => $params]);
+				$data = static::$api->get(null, ['query' => $params]);
 
-				return isset($collection->ListaObjetos) ? $collection->ListaObjetos : [];
+				return static::normalizeData($data, false);
 		}
 
 		public static function find($id)
 		{
 				static::setApi();
 
-				$collection = static::$api->get($id);
+				$data = static::$api->get($id);
 
-				return $collection->ListaObjetos ? reset($collection->ListaObjetos) : null;
+				return static::normalizeData($data, true);
 		}
 
 		public static function create(array $params)
 		{
 				static::setApi();
 
-				return static::$api->post(null, ['json' => $params]);
+				$data = static::$api->post(null, ['json' => $params]);
+
+				return static::normalizeData($data, true);
 		}
 
 		public static function update($id, $params)
 		{
 				static::setApi();
 
-				return static::$api->put($id, ['json' => $params]);
+				$data = static::$api->put($id, ['json' => $params]);
+
+				return static::normalizeData($data, true);
 		}
 
 		public static function delete($id, array $params = [])
@@ -49,5 +53,19 @@ abstract class Resource
 				static::setApi();
 
 				return static::$api->delete($id, ['json' => $params]);
+		}
+
+		/*
+				Some GET/resource/ID methods returns an empty array with a 400 error (!)
+				and some returns an array with a NULL value inside with a 200 OK response (what?!)
+		*/
+		private static function normalizeData($response, $first = false)
+		{
+				$isArray		= isset($response->ListaObjetos) && is_array($response->ListaObjetos);
+
+				$array 			= $isArray ? $response->ListaObjetos : [];
+				$item				= reset($array) ? reset($array) : null;
+
+				return $first ? $item : $array;
 		}
 }

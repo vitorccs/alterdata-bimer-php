@@ -2,6 +2,8 @@
 namespace Bimer\Http;
 
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 
 class Api
 {
@@ -42,17 +44,13 @@ class Api
 				$this->client->setToken($response->access_token);
 		}
 
-		private function getUrl($endpoint)
+		private function setFullEndpoint(&$endpoint)
 		{
 				if (substr($endpoint, 0, 1) == '/') {
-						return $endpoint;
+						return;
 				}
 
-				if ($endpoint) {
-						return $this->endpoint .'/'. $endpoint;
-				}
-
-				return $this->endpoint;
+				$endpoint = $this->endpoint .'/'. $endpoint;
 		}
 
 		private function setAuthHeaders(&$options)
@@ -74,15 +72,16 @@ class Api
 						$this->checkAuth();
 				}
 
-				$url = $this->getUrl($endpoint);
-
+				$this->setFullEndpoint($endpoint);
 				$this->setAuthHeaders($options);
 
         try {
-            $response = $this->client->request($method, $url, $options);
-        } catch (\Exception $e) {
+            $response = $this->client->request($method, $endpoint, $options);
+        } catch (ClientException $e) {
             $response = $e->getResponse();
-        }
+        }catch (RequestException $e) {
+    				$response = $e->getResponse();
+				}
 
         return $this->response($response);
     }
@@ -111,7 +110,10 @@ class Api
 				if ($statusClass === 4 || $statusClass === 5) {
 						switch ($code) {
 								case 400:
-									throw new \Exception("{$code} ($reason) {$message}");
+										// This code is used by Bimmer API when trying to get a Resource
+										// by ID that could not be found, let's normalize to always return
+										// a null value in such cases
+										return;
 								default:
 										throw new \Exception("{$code} ($reason) {$message} ($fullUrl)");
 						}
