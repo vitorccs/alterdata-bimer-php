@@ -5,6 +5,9 @@ use Bimer\Http\Resource;
 
 class Person extends Resource
 {
-		protected static $endpoint = 'pessoas';
+		public static function endpoint()
+		{
+				return 'pessoas';
+		}
 }
 ?>

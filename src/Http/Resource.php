@@ -5,9 +5,11 @@ abstract class Resource
 {
 		protected static $api;
 
+		abstract public static function endpoint();
+
 		public static function setApi()
 		{
-				static::$api = new Api(static::$endpoint);
+				static::$api = new Api(static::endpoint());
 		}
 
 		public static function all($params = [])
@@ -16,7 +18,7 @@ abstract class Resource
 
 				$collection = static::$api->get(null, ['query' => $params]);
 
-				return $collection->ListaObjetos ? $collection->ListaObjetos : [];
+				return isset($collection->ListaObjetos) ? $collection->ListaObjetos : [];
 		}
 
 		public static function find($id)

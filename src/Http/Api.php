@@ -106,14 +106,12 @@ class Api
 				$statusClass 	= (int) ($code / 100);
 				$data 				= (array) $data;
 
-				$message			= $data['error_description'] ?? '';
+				$message			= isset($data['error_description']) ? $data['error_description'] : '';
 
 				if ($statusClass === 4 || $statusClass === 5) {
 						switch ($code) {
 								case 400:
 									throw new \Exception("{$code} ($reason) {$message}");
-								case 404:
-										throw new \Exception("{$code} ($reason) {$message} ($fullUrl)");
 								default:
 										throw new \Exception("{$code} ($reason) {$message} ($fullUrl)");
 						}

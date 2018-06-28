@@ -11,6 +11,10 @@
         "php": ">=5.6.0",
         "guzzlehttp/guzzle": "^6.3"
     },
+    "require-dev": {
+        "php": ">=7.0",
+        "phpunit/phpunit": "^6"
+    },
     "authors": [
         {
             "name": "Vitor Siqueira",
@@ -21,5 +25,13 @@
         "psr-4": {
             "Bimer\\": "src"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bimer\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
