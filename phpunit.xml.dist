@@ -12,6 +12,7 @@
     <testsuites>
         <testsuite name="Bimer Test Suite">
             <directory>tests</directory>
+            <exclude>./tests/ResourceTest.php</exclude>
         </testsuite>
     </testsuites>
     <filter>

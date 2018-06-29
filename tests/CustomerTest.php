@@ -9,7 +9,7 @@ class CustomerTest extends ResourceTest
 		{
 				$this->resource = 'Bimer\Customer';
 				$this->endpoint = 'clientes';
-				$this->postData = [
+				$this->data = [
 				   'Identificador' => '',
 					 'IdentificadorRepresentantePrincipal' => '',
 				   'Tipo' => 'F',

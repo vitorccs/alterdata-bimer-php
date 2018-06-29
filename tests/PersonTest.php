@@ -9,6 +9,7 @@ class PersonTest extends ResourceTest
 		{
 				$this->resource = 'Bimer\Person';
 				$this->endpoint = 'pessoas';
+				$this->data = [];
 		}
 
 		/** @test */
@@ -18,5 +19,14 @@ class PersonTest extends ResourceTest
 				$this->expectException(\Exception::class);
 
 				parent::it_should_retrieve_all_resources();
+    }
+
+		/** @test */
+    public function it_should_create_a_resource()
+    {
+				// method not implemented on Bimmer API
+				$this->expectException(\Exception::class);
+
+				parent::it_should_create_a_resource();
     }
 }

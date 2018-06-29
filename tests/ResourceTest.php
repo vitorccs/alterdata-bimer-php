@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Bimer\Test;
 
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class ResourceTest extends TestCase
 {
@@ -52,8 +51,8 @@ class ResourceTest extends TestCase
 		/** @test */
     public function it_should_create_a_resource()
     {
-        $this->postData = $this->resource::create($this->postData);
-				$this->assertObjectHasAttribute('Identificador', $this->postData);
+        $this->data = $this->resource::create($this->data);
+				$this->assertObjectHasAttribute('Identificador', $this->data);
     }
 
 		/**
@@ -61,11 +60,11 @@ class ResourceTest extends TestCase
      */
     public function it_should_update_a_resource()
     {
-				$this->postData['Nome'] = 'Alterado';
+				$this->data['Nome'] = 'Alterado';
 
-        $response = $this->resource::update($this->postData['Identificador'], $this->postData);
+        $response = $this->resource::update($this->data['Identificador'], $this->data);
 				$this->assertObjectHasAttribute('Identificador', $response);
 
-				$this->assertSame($this->postData['Nome'], 'Alterado');
+				$this->assertSame($this->data['Nome'], 'Alterado');
     }
 }
