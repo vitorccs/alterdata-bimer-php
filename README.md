@@ -36,9 +36,10 @@ $person = Bimer\Person::update($strId, $arrayData);
 ```
 
 ## Métodos específicos por recurso
+```php
 $people = Bimer\Person::getByName('NOME', true);
-
 $people = Bimer\Person::getByCpfCnpj('123.456.789-01');
+```
 
 ## Variáveis de ambiente
 Os seguintes parâmetros devem ser informados:
