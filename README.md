@@ -37,6 +37,7 @@ $person = Bimer\Person::update($strId, $arrayData);
 
 ## Métodos específicos por recurso
 $people = Bimer\Person::getByName('NOME', true);
+
 $people = Bimer\Person::getByCpfCnpj('123.456.789-01');
 
 ## Variáveis de ambiente
@@ -114,6 +115,8 @@ die("Success \n");
 * Cliente (Customer)
 * Pessoa (Person)
 * PessoaCaracteristica (PersonCharacteristic)
+
+... por favor, contribua com mais implementações
 
 
 ## Testes
