@@ -1,12 +1,69 @@
-# alterdata-bimer-php
+# Alterdata Bimer - SDK PHP
 SDK PHP para a API do Alterdata Bimer
 
-# Exemplos
+
+## Descrição
+SDK em PHP para integração com os serviços de API do ERP Alterdata Bimer.
+Documentação da API Alterdata Bimer: https://bimersandbox.alterdata.com.br/#/.
+
+
+## Instalação
+Via Composer
+```bash
+composer require vitorccs/alterdata-bimer-php
+```
+
+
+## Métodos disponíveis
+All: Buscar objetos. Retorna array de objetos.
+```php
+$person = Bimer\PersonCharacteristic::all();
+```
+
+Find: Encontrar objetos por ID. Retorna objeto.
+```php
+$person = Bimer\Person::find($strId);
+```
+
+Create - Criar novo objeto. Retorna objeto criado.
+```php
+$customer = Bimer\Customer::create($arrayData);
+```
+
+Update - Atualiza objeto. Retorna objeto atualizado.
+```php
+$person = Bimer\Person::update($strId, $arrayData);
+```
+
+## Métodos específicos por recurso
+$people = Bimer\Person::getByName('NOME', true);
+$people = Bimer\Person::getByCpfCnpj('123.456.789-01');
+
+## Variáveis de ambiente
+Os seguintes parâmetros devem ser informados:
+* BIMER_API_URL (URL da API)
+* BIMER_API_ID (ID do cliente)
+* BIMER_API_SECRET (Segredo do cliente)
+* BIMER_API_USER (Usuário)
+* BIMER_API_PWD (Senha)
+* BIMER_API_TIMEOUT (Opcional, padrão 30. Timeout em segundos para estabelecer conexão com a API)
+
+
+## Autenticação
+Não é necessário codificar a variável BIMER_API_PWD com MD5, a SDK fará isso automaticamente.
+
+Não é necessário autenticar manualmente. O SDK irá detectar a ausência do token e autenticará automaticamente, obtendo um token válido e independente.
+
+Cada processo PHP terá o seu próprio token de autenticação até o término completo do script PHP. Desta forma, evitamos sobrecarga no servidor da API.
+
+
+## Exemplo de implementação
+
 ```php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require 'vendor/autoload.php';
+require __DIR__.'/vendor/autoload.php';
 
 putenv('BIMER_API_URL=http://path:8086/api/');
 putenv('BIMER_API_ID=client_id');
@@ -16,15 +73,24 @@ putenv('BIMER_API_PWD=password');
 
 try {
     $characteristics = Bimer\PersonCharacteristic::all();
-    
-    $person1 = Bimer\Person::find('00A0000SQ4');
-    $person2 = Bimer\Person::find('NOTFOUND');
-    $person1 = Bimer\Person::update('00A0000SQ4', [
-		   'Nome' => 'Nome Completo25',
-		   'NomeCurto' => 'Nome Curto25'
-		]);
+    print_r($characteristics); // array of objects
 
-    $customer1 = Bimer\Customer::create([
+    $person = Bimer\Person::find('00A0000SQ4');
+    print_r($person); // object
+
+    $person = Bimer\Person::update('00A0000SQ4', [
+       'Nome' => 'Nome Completo2',
+       'NomeCurto' => 'Nome Curto2'
+    ]);
+    print_r($person); // object
+
+    $people = Bimer\Person::getByName('NOME', true);
+    print_r($people); // array of objects
+
+    $people = Bimer\Person::getByCpfCnpj('123.456.789-01');
+    print_r($people); // array of objects
+
+    $customer = Bimer\Customer::create([
         'Identificador' => '',
         'IdentificadorRepresentantePrincipal' => '',
         'Tipo' => 'F',
@@ -34,16 +100,30 @@ try {
         'Nome' => 'Nome Completo',
         'NomeCurto' => 'Nome Curto'
     ]);
-
+    print_r($customer); // object
 
 } catch (\Exception $e) {
     die("Error: ". $e->getMessage() ."\n");
 }
 
-//print_r($characteristics); // array of objects
-//print_r($person1); // object
-//var_dump($person2); // NULL
-//print_r($customer1); // object
-
 die("Success \n");
+```
+
+
+## Métodos implementados
+* Cliente (Customer)
+* Pessoa (Person)
+* PessoaCaracteristica (PersonCharacteristic)
+
+
+## Testes
+Caso queira contribuir, por favor, implementar testes de unidade em PHPUnit.
+
+Para executar:
+1) Faça uma cópia de phpunit.xml.dist em phpunit.xml na raíz do projeto
+2) Altere os parâmtros ENV com os dados de seu acesso
+3) Execute o comando abaixo no terminal dentro da pasta deste projeto:
+
+```bash
+composer test
 ```

@@ -3,69 +3,71 @@ namespace Bimer\Http;
 
 abstract class Resource
 {
-		protected static $api;
+    protected static $api;
 
-		abstract public static function endpoint();
+    abstract public static function endpoint();
 
-		public static function setApi()
-		{
-				static::$api = new Api(static::endpoint());
-		}
+    public static function setApi()
+    {
+        static::$api = new Api(static::endpoint());
+    }
 
-		public static function all($params = [])
-		{
-				static::setApi();
+    public static function all($params = [], $endpoint = null)
+    {
+        static::setApi();
 
-				$data = static::$api->get(null, ['query' => $params]);
+        $data = static::$api->get($endpoint, ['query' => $params]);
 
-				return static::normalizeData($data, false);
-		}
+        return static::normalizeData($data, false);
+    }
 
-		public static function find($id)
-		{
-				static::setApi();
+    public static function find($id)
+    {
+        static::setApi();
 
-				$data = static::$api->get($id);
+        $data = static::$api->get($id);
 
-				return static::normalizeData($data, true);
-		}
+        return static::normalizeData($data);
+    }
 
-		public static function create(array $params)
-		{
-				static::setApi();
+    public static function create(array $params)
+    {
+        static::setApi();
 
-				$data = static::$api->post(null, ['json' => $params]);
+        $data = static::$api->post(null, ['json' => $params]);
 
-				return static::normalizeData($data, true);
-		}
+        return static::normalizeData($data);
+    }
 
-		public static function update($id, $params)
-		{
-				static::setApi();
+    public static function update($id, $params)
+    {
+        static::setApi();
 
-				$data = static::$api->put($id, ['json' => $params]);
+        $data = static::$api->put($id, ['json' => $params]);
 
-				return static::normalizeData($data, true);
-		}
+        return static::normalizeData($data);
+    }
 
-		public static function delete($id, array $params = [])
-		{
-				static::setApi();
+    public static function delete($id, array $params = [])
+    {
+        static::setApi();
 
-				return static::$api->delete($id, ['json' => $params]);
-		}
+        $data = static::$api->delete($id, ['json' => $params]);
 
-		/*
-				Some GET/resource/ID methods returns an empty array with a 400 error (!)
-				and some returns an array with a NULL value inside with a 200 OK response (what?!)
-		*/
-		private static function normalizeData($response, $first = false)
-		{
-				$isArray		= isset($response->ListaObjetos) && is_array($response->ListaObjetos);
+        return static::normalizeData($data);
+    }
 
-				$array 			= $isArray ? $response->ListaObjetos : [];
-				$item				= reset($array) ? reset($array) : null;
+    /*
+        Normalize Response Data so it will return an array for "all" method
+        and a single object for all other methods
+    */
+    private static function normalizeData($response, $single = true)
+    {
+        $isArray    = isset($response->ListaObjetos) && is_array($response->ListaObjetos);
 
-				return $first ? $item : $array;
-		}
+        $array      = $isArray ? $response->ListaObjetos : [];
+        $item       = reset($array) ? reset($array) : null;
+
+        return $single ? $item : $array;
+    }
 }
