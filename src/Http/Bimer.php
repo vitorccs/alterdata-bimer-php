@@ -3,12 +3,12 @@ namespace Bimer\Http;
 
 class Bimer
 {
-    const BIMER_API_URL					= 'BIMER_API_URL';
-    const BIMER_API_USER				= 'BIMER_API_USER';
-    const BIMER_API_PWD					= 'BIMER_API_PWD';
-    const BIMER_API_ID					= 'BIMER_API_ID';
-    const BIMER_API_SECRET				= 'BIMER_API_SECRET';
-    const BIMER_API_TIMEOUT				= 'BIMER_API_TIMEOUT';
+    const BIMER_API_URL                 = 'BIMER_API_URL';
+    const BIMER_API_USER                = 'BIMER_API_USER';
+    const BIMER_API_PWD                 = 'BIMER_API_PWD';
+    const BIMER_API_ID                  = 'BIMER_API_ID';
+    const BIMER_API_SECRET              = 'BIMER_API_SECRET';
+    const BIMER_API_TIMEOUT             = 'BIMER_API_TIMEOUT';
 
     private static $apiUrl;
     private static $username;
@@ -17,9 +17,12 @@ class Bimer
     private static $clientSecret;
     private static $timeout;
 
-    private static $token				= null;
-    private static $sdkVersion			= 0.9;
-    private static $defTimeout			= 30;
+    private static $defTimeout          = 30; // default timeout in seconds
+    private static $tokenDuration       = 10; // token duration in minutes
+
+    private static $token               = null;
+    private static $sdkVersion          = 0.9;
+    private static $tokenTimestamp      = 0;
 
     public static function getApiUrl()
     {
@@ -106,11 +109,31 @@ class Bimer
 
     public static function getToken()
     {
+        if (static::minutesLapsed() >= static::$tokenDuration) {
+            static::expireToken();
+        }
+
         return static::$token;
+    }
+
+    public static function expireToken()
+    {
+        static::setToken(null);
     }
 
     public static function setToken($token)
     {
+        static::$tokenTimestamp = ($token ? time() : 0);
+
         static::$token = $token;
+    }
+
+    public static function minutesLapsed()
+    {
+        $to_time    = time();
+        $from_time  = static::$tokenTimestamp;
+        $mins       = round(abs($to_time - $from_time) / 60, 2);
+
+        return $mins;
     }
 }

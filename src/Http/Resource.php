@@ -12,22 +12,35 @@ abstract class Resource
         static::$api = new Api(static::endpoint());
     }
 
+    // Alias for GET (with params)
     public static function all($params = [], $endpoint = null)
+    {
+        return static::get($endpoint, $params, false);
+    }
+
+    // Alias for GET (without params)
+    public static function find($id)
+    {
+        return static::get($id);
+    }
+
+    public static function get($endpoint = null, $params = [], $single = true)
     {
         static::setApi();
 
         $data = static::$api->get($endpoint, ['query' => $params]);
 
-        return static::normalizeData($data, false);
+        return static::normalizeData($data, $single);
     }
 
-    public static function find($id)
+    // Alias for Create and Update methods
+    public static function save(array $params)
     {
-        static::setApi();
+        if (isset($params['Identificador'])) {
+            return static::create($params);
+        }
 
-        $data = static::$api->get($id);
-
-        return static::normalizeData($data);
+        return static::update($params['Identificador'], $params);
     }
 
     public static function create(array $params)

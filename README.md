@@ -54,9 +54,9 @@ Os seguintes parâmetros devem ser informados:
 ## Autenticação
 Não é necessário codificar a variável BIMER_API_PWD com MD5, a SDK fará isso automaticamente.
 
-Não é necessário autenticar manualmente. O SDK irá detectar a ausência do token e autenticará automaticamente, obtendo um token válido e independente.
+Não é necessário autenticar manualmente, O SDK irá autenticar e obter um token automaticamente.
 
-Cada processo PHP terá o seu próprio token de autenticação até o término completo do script PHP. Desta forma, evitamos sobrecarga no servidor da API.
+Cada processo PHP possuirá o seu próprio token de autenticação, sendo reaproveitado até o término da execução do script PHP. Caso esteja executando o PHP sem timeout (ex: CLI), o token será trocado a cada 10 minutos. Desta forma, evitamos sobrecarga no servidor da API.
 
 
 ## Exemplo de implementação
@@ -113,6 +113,7 @@ die("Success \n");
 
 
 ## Métodos implementados
+* CEP (PostalCode)
 * Cliente (Customer)
 * Pessoa (Person)
 * PessoaCaracteristica (PersonCharacteristic)
