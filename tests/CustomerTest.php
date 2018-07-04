@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
+use Bimer\Exceptions\BimerRequestException;
+
 class CustomerTest extends ResourceTest
 {
     public function setUp()
@@ -10,32 +12,22 @@ class CustomerTest extends ResourceTest
         $this->resource = 'Bimer\Customer';
         $this->endpoint = 'clientes';
         $this->data = [
-            'Identificador' => '',
-            'IdentificadorRepresentantePrincipal' => '',
-            'Tipo' => 'F',
-            'Codigo' => '',
-            'CpfCnpj' => '01234567894',
-            'DataNascimento' => '1980-04-26T00:00:00:000Z',
-            'Nome' => 'Nome Completo',
-            'NomeCurto' => 'Nome Curto'
+            'Nome' => 'Creating Customer #'. rand()
         ];
     }
 
     /** @test */
-    public function it_should_retrieve_all_resources()
+    public function it_should_not_create_a_resource()
     {
-        // method not implemented on Bimmer API
-        $this->expectException(\Exception::class);
-
-        parent::it_should_retrieve_all_resources();
+        $invalidParameters = [];
+        $this->expectException(BimerRequestException::class);
+        $this->resource::create($invalidParameters);
     }
 
     /** @test */
-    public function it_should_not_find_one_resource()
+    public function it_should_create_a_resource()
     {
-        // method not implemented on Bimmer API
-        $this->expectException(\Exception::class);
-
-        parent::it_should_not_find_one_resource();
+        $customer = $this->resource::create($this->data);
+        $this->assertObjectHasAttribute('Identificador', $customer);
     }
 }

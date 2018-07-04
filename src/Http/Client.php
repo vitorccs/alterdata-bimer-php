@@ -6,31 +6,23 @@ use GuzzleHttp\TransferStats;
 
 class Client extends Guzzle
 {
-    protected $apiUrl;
-    protected $timeout;
-    protected $sdkVersion;
-    protected $token;
     protected $fullUrl;
 
     public function __construct(array $config = [])
     {
-        $this->apiUrl           = Bimer::getApiUrl();
-        $this->timeout          = Bimer::getTimeout();
-        $this->sdkVersion       = Bimer::getSdkVersion();
-        $this->token            = Bimer::getToken();
-
+        $sdkVersion = Bimer::getSdkVersion();
         $host       = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
         $url        = &$this->fullUrl;
 
         $config = array_merge([
-            'base_uri'      => $this->apiUrl,
-            'timeout'       => $this->timeout,
+            'base_uri'      => Bimer::getApiUrl(),
+            'timeout'       => Bimer::getTimeout(),
             'on_stats'      => function (TransferStats $stats) use (&$url) {
                 $url = $stats->getEffectiveUri();
             },
             'headers'       => [
                 'Content-Type'      => 'application/json',
-                'User-Agent'        => "Alterdata-Bimer-PHP/{$this->sdkVersion};{$host}"
+                'User-Agent'        => "Alterdata-Bimer-PHP/{$sdkVersion};{$host}"
             ]
         ], $config);
 
@@ -39,7 +31,7 @@ class Client extends Guzzle
 
     public function getToken()
     {
-        return $this->token;
+        return Bimer::getToken();
     }
 
     public function getFullUrl()
@@ -47,12 +39,9 @@ class Client extends Guzzle
         return $this->fullUrl;
     }
 
-    public function setToken($token)
+    public function setToken($token = null)
     {
-        // make token available for all further requests
         Bimer::setToken($token);
-
-        $this->token = $token;
     }
 
     public function getCredentials()

@@ -37,7 +37,8 @@ $person = Bimer\Person::update($strId, $arrayData);
 
 ## Métodos específicos por recurso
 ```php
-$people = Bimer\Person::getByName('NOME', true);
+$postalCode = Bimer\PostalCode::getByCode('03943000');
+$people = Bimer\Person::getByName('maria', true);
 $people = Bimer\Person::getByCpfCnpj('123.456.789-01');
 ```
 

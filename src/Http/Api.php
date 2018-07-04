@@ -5,6 +5,9 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 
+use Bimer\Exceptions\BimerRequestException;
+use Bimer\Exceptions\BimerClientException;
+
 class Api
 {
     protected $client;
@@ -84,7 +87,7 @@ class Api
         }
 
         if (!$response) {
-            throw new \Exception('Unable to connect to the host');
+            throw new BimerClientException('Unable to connect to the host');
         }
 
         return $this->response($response);
@@ -103,28 +106,57 @@ class Api
 
     private function checkForErrors(ResponseInterface $response, $data)
     {
-        $fullUrl        = $this->client->getFullUrl();
         $code           = $response->getStatusCode();
-        $reason         = $response->getReasonPhrase();
         $statusClass    = (int) ($code / 100);
         $data           = (array) $data;
-
-        $message        = isset($data['error_description']) ? $data['error_description'] : '';
 
         if ($statusClass === 4 || $statusClass === 5) {
             switch ($code) {
                 case 400:
-                    // This code is used by Bimmer API when trying to get that could not be found
-                    // so let's normalize to always return an empty (null) value in such cases
+                    $this->checkForRequestException($data);
                     return;
-                case 404:
-                case 405:
-                    // These code are used by Bimmer API when the method is not implemeted
-                    throw new \Exception("Method not implemented for this resource");
                 default:
-                    throw new \Exception("{$code} ($reason) {$message} ($fullUrl)");
+                    $this->checkForClientException($data, $response);
+                    return;
             }
         }
+    }
+
+    /*
+        Since Bimer API always responds with a 400 HTTP for all the following,
+        we then need to trust on its "ErrorCode" parameter
+
+            Resouce error               | REST specification        | Bimer ErrorCode
+            -------------------------------------------------------------------------
+            Get (no resource found)     | 200 OK                    | C01
+            Get/id (no resource found)  | 404 Not Found             | C01
+            POST (parameter error)      | 422 Unprocessable Entity  | -1
+            PUT/id (parameter error)    | 422 Unprocessable Entity  | -1
+    */
+    private function checkForRequestException($data)
+    {
+        $hasErrors = isset($data['Erros']) &&
+                        isset($data['Erros'][0]) &&
+                        isset($data['Erros'][0]->ErrorMessage);
+
+        $isNotFoundError = isset($data['Erros']) &&
+                        isset($data['Erros'][0]) &&
+                        isset($data['Erros'][0]->ErrorCode) &&
+                        $data['Erros'][0]->ErrorCode == 'C01';
+
+        if ($hasErrors && !$isNotFoundError) {
+            throw new BimerRequestException($data['Erros'][0]->ErrorMessage);
+        }
+    }
+
+    private function checkForClientException($data, $response)
+    {
+        $code        = $response->getStatusCode();
+        $reason      = $response->getReasonPhrase();
+        $description = isset($data['error_description']) ? $data['error_description'] : '';
+        $message     = "{$code} ($reason) {$description}";
+
+        throw new BimerClientException($message);
     }
 
     public function get($endpoint, array $options = [])
