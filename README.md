@@ -118,6 +118,7 @@ die("Success \n");
 * Cliente (Customer)
 * Pessoa (Person)
 * PessoaCaracteristica (PersonCharacteristic)
+* Titulos a Receber (Income)
 
 ... por favor, contribua com mais implementações
 
