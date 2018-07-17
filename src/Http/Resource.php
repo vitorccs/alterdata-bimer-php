@@ -32,7 +32,7 @@ abstract class Resource
     // Alias for Create and Update methods
     public static function save(array $params)
     {
-        if (isset($params['Identificador'])) {
+        if (!isset($params['Identificador'])) {
             return static::create($params);
         }
 
