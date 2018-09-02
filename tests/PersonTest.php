@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
-use Bimer\Exceptions\BimerRequestException;
+use Bimer\Exceptions\BimerValidationException;
 
 class PersonTest extends ResourceTest
 {
@@ -16,7 +16,7 @@ class PersonTest extends ResourceTest
     /** @test */
     public function it_should_validate_name()
     {
-        $this->expectException(BimerRequestException::class);
+        $this->expectException(BimerValidationException::class);
 
         $response = $this->resource::getByName('a');
     }
@@ -32,7 +32,7 @@ class PersonTest extends ResourceTest
     /** @test */
     public function it_should_validate_cpf_cnpj()
     {
-        $this->expectException(BimerRequestException::class);
+        $this->expectException(BimerValidationException::class);
 
         $response = $this->resource::getByCpfCnpj('123.456.789-01');
         $this->assertGreaterThanOrEqual(0, count($response));
@@ -74,7 +74,7 @@ class PersonTest extends ResourceTest
      */
     public function it_should_validate_address($customer)
     {
-        $this->expectException(BimerRequestException::class);
+        $this->expectException(BimerValidationException::class);
 
         $data = [
             'Nome' => 'Changed'

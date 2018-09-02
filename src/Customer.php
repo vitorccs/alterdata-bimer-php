@@ -2,7 +2,7 @@
 namespace Bimer;
 
 use Bimer\Http\Resource;
-use Bimer\Exceptions\BimerRequestException;
+use Bimer\Exceptions\BimerValidationException;
 
 class Customer extends Resource
 {
@@ -17,7 +17,7 @@ class Customer extends Resource
         // If missing a mandatory parameter, rather than warning the user
         // instead triggers 500 error code with a message that is not clear
         if (!isset($params['Nome'])) {
-            throw new BimerRequestException('The parameter "Nome" is mandatory');
+            throw new BimerValidationException('The parameter "Nome" is mandatory');
         }
 
         return parent::create($params);

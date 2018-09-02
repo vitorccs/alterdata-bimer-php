@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
-use Bimer\Exceptions\BimerRequestException;
-
 class PersonCharacteristicTest extends ResourceTest
 {
     public function setUp()

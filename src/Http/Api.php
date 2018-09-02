@@ -6,14 +6,14 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 
 use Bimer\Exceptions\BimerRequestException;
-use Bimer\Exceptions\BimerClientException;
+use Bimer\Exceptions\BimerValidationException;
 
 class Api
 {
     protected $client;
     protected $endpoint;
 
-    public function __construct($endpoint)
+    public function __construct(string $endpoint)
     {
         $this->client = new Client();
         $this->endpoint = $endpoint;
@@ -47,21 +47,13 @@ class Api
         $this->client->setToken($response->access_token);
     }
 
-    private function setFullEndpoint(&$endpoint)
+    private function setFullEndpoint(string &$endpoint = null)
     {
-        if (substr($endpoint, 0, 1) == '/') {
-            return;
-        }
-
         $endpoint = $this->endpoint .'/'. $endpoint;
     }
 
-    private function setAuthHeaders(&$options)
+    private function setAuthHeaders(array &$options = [])
     {
-        if (!$this->client->getToken()) {
-            return true;
-        }
-
         $options = array_merge($options, [
             'headers' => [
                 'Authorization' => 'Bearer '. $this->client->getToken()
@@ -69,25 +61,22 @@ class Api
         ]);
     }
 
-    public function request($method, $endpoint, array $options = [])
+    public function request(string $method, string $endpoint = null, array $options = [])
     {
         if ($endpoint != '/oauth/token') {
             $this->checkAuth();
+            $this->setFullEndpoint($endpoint);
+            $this->setAuthHeaders($options);
         }
-
-        $this->setFullEndpoint($endpoint);
-        $this->setAuthHeaders($options);
 
         try {
             $response = $this->client->request($method, $endpoint, $options);
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
         } catch (RequestException $e) {
-            $response = $e->getResponse();
-        }
+            if (!$e->hasResponse()) {
+                throw new BimerRequestException($e->getMessage());
+            }
 
-        if (!$response) {
-            throw new BimerClientException('Unable to connect to the host');
+            $response = $e->getResponse();
         }
 
         return $this->response($response);
@@ -104,19 +93,18 @@ class Api
         return $data;
     }
 
-    private function checkForErrors(ResponseInterface $response, $data)
+    private function checkForErrors(ResponseInterface $response, \stdClass $data = null)
     {
         $code           = $response->getStatusCode();
         $statusClass    = (int) ($code / 100);
-        $data           = (array) $data;
 
         if ($statusClass === 4 || $statusClass === 5) {
             switch ($code) {
                 case 400:
-                    $this->checkForRequestException($data);
+                    $this->checkForValidationException($data);
                     return;
                 default:
-                    $this->checkForClientException($data, $response);
+                    $this->checkForRequestException($response, $data);
                     return;
             }
         }
@@ -133,48 +121,48 @@ class Api
             POST (parameter error)      | 422 Unprocessable Entity  | -1
             PUT/id (parameter error)    | 422 Unprocessable Entity  | -1
     */
-    private function checkForRequestException($data)
+    private function checkForValidationException(\stdClass $data = null)
     {
-        $hasErrors = isset($data['Erros']) &&
-                        isset($data['Erros'][0]) &&
-                        isset($data['Erros'][0]->ErrorMessage);
+        $hasErrors = isset($data->Erros) &&
+                        isset($data->Erros[0]) &&
+                        isset($data->Erros[0]->ErrorMessage);
 
-        $isNotFoundError = isset($data['Erros']) &&
-                        isset($data['Erros'][0]) &&
-                        isset($data['Erros'][0]->ErrorCode) &&
-                        $data['Erros'][0]->ErrorCode == 'C01';
+        $isNotFoundError = isset($data->Erros) &&
+                        isset($data->Erros[0]) &&
+                        isset($data->Erros[0]->ErrorCode) &&
+                        $data->Erros[0]->ErrorCode == 'C01';
 
         if ($hasErrors && !$isNotFoundError) {
-            throw new BimerRequestException($data['Erros'][0]->ErrorMessage);
+            throw new BimerValidationException($data->Erros[0]->ErrorMessage);
         }
     }
 
-    private function checkForClientException($data, $response)
+    private function checkForRequestException(ResponseInterface $response, \stdClass $data = null)
     {
         $code        = $response->getStatusCode();
         $reason      = $response->getReasonPhrase();
-        $description = isset($data['error_description']) ? $data['error_description'] : '';
+        $description = isset($data->error_description) ? $data->error_description : '';
         $message     = "{$code} ($reason) {$description}";
 
-        throw new BimerClientException($message);
+        throw new BimerRequestException($message);
     }
 
-    public function get($endpoint, array $options = [])
+    public function get(string $endpoint = null, array $options = [])
     {
         return $this->request('GET', $endpoint, $options);
     }
 
-    public function post($endpoint, array $options = [])
+    public function post(string $endpoint = null, array $options = [])
     {
         return $this->request('POST', $endpoint, $options);
     }
 
-    public function put($endpoint, array $options = [])
+    public function put(string $endpoint, array $options = [])
     {
         return $this->request('PUT', $endpoint, $options);
     }
 
-    public function delete($endpoint, array $options = [])
+    public function delete(string $endpoint, array $options = [])
     {
         return $this->request('PUT', $endpoint, $options);
     }

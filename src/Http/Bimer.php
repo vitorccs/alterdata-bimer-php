@@ -1,6 +1,8 @@
 <?php
 namespace Bimer\Http;
 
+use Bimer\Exceptions\BimerParameterException;
+
 class Bimer
 {
     const BIMER_API_URL                 = 'BIMER_API_URL';
@@ -31,7 +33,7 @@ class Bimer
         }
 
         if (!static::$apiUrl) {
-            throw new \Exception('Missing '. static::BIMER_API_URL .' parameter');
+            throw new BimerParameterException('Missing '. static::BIMER_API_URL .' parameter');
         }
 
         return static::$apiUrl;
@@ -44,7 +46,7 @@ class Bimer
         }
 
         if (!static::$username) {
-            throw new \Exception('Missing '. static::BIMER_API_USER .' parameter');
+            throw new BimerParameterException('Missing '. static::BIMER_API_USER .' parameter');
         }
 
         return static::$username;
@@ -57,7 +59,7 @@ class Bimer
         }
 
         if (!static::$password) {
-            throw new \Exception('Missing '. static::BIMER_API_PWD .' parameter');
+            throw new BimerParameterException('Missing '. static::BIMER_API_PWD .' parameter');
         }
 
         return static::$password;
@@ -70,7 +72,7 @@ class Bimer
         }
 
         if (!static::$clientId) {
-            throw new \Exception('Missing '. static::BIMER_API_ID .' parameter');
+            throw new BimerParameterException('Missing '. static::BIMER_API_ID .' parameter');
         }
 
         return static::$clientId;
@@ -83,7 +85,7 @@ class Bimer
         }
 
         if (!static::$clientSecret) {
-            throw new \Exception('Missing '. static::BIMER_API_SECRET .' parameter');
+            throw new BimerParameterException('Missing '. static::BIMER_API_SECRET .' parameter');
         }
 
         return static::$clientSecret;
