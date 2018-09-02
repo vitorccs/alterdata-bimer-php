@@ -99,14 +99,9 @@ class Api
         $statusClass    = (int) ($code / 100);
 
         if ($statusClass === 4 || $statusClass === 5) {
-            switch ($code) {
-                case 400:
-                    $this->checkForValidationException($data);
-                    return;
-                default:
-                    $this->checkForRequestException($response, $data);
-                    return;
-            }
+            if ($this->ignoreException($data)) return;
+            $this->checkForValidationException($data);
+            $this->checkForRequestException($response, $data);
         }
     }
 
@@ -127,12 +122,7 @@ class Api
                         isset($data->Erros[0]) &&
                         isset($data->Erros[0]->ErrorMessage);
 
-        $isNotFoundError = isset($data->Erros) &&
-                        isset($data->Erros[0]) &&
-                        isset($data->Erros[0]->ErrorCode) &&
-                        $data->Erros[0]->ErrorCode == 'C01';
-
-        if ($hasErrors && !$isNotFoundError) {
+        if ($hasErrors) {
             throw new BimerValidationException($data->Erros[0]->ErrorMessage);
         }
     }
@@ -145,6 +135,16 @@ class Api
         $message     = "{$code} ($reason) {$description}";
 
         throw new BimerRequestException($message);
+    }
+
+    private function ignoreException(\stdClass $data = null)
+    {
+        $isGetNotFound = isset($data->Erros) &&
+                         isset($data->Erros[0]) &&
+                         isset($data->Erros[0]->ErrorCode) &&
+                         $data->Erros[0]->ErrorCode == 'C01';
+
+        return $isGetNotFound;
     }
 
     public function get(string $endpoint = null, array $options = [])

@@ -39,23 +39,32 @@ class PersonTest extends ResourceTest
     }
 
     /** @test */
-    public function it_should_retrieve_by_cpf_cnpj()
-    {
-        $response = $this->resource::getByCpfCnpj('537.220.560-12');
-        $this->assertTrue(is_array($response));
-        $this->assertGreaterThanOrEqual(0, count($response));
-    }
-
-    /** @test */
     public function it_should_create_a_resource()
     {
         $customer = \Bimer\Customer::create([
-            'Nome' => 'Creating Customer #'. rand()
+            'Nome' => 'Creating Customer #'. rand(),
+            'CpfCnpj' => '52693212030'
         ]);
 
         $this->assertObjectHasAttribute('Identificador', $customer);
 
         return $customer;
+    }
+
+    /** @test */
+    public function it_should_retrieve_none_by_cpf_cnpjj()
+    {
+        $response = $this->resource::getByCpfCnpj('537.220.560-12');
+        $empty = is_array($response) && count($response) == 0;
+        $this->assertTrue($empty);
+    }
+
+    /** @test */
+    public function it_should_retrieve_some_by_cpf_cnpj()
+    {
+        $response = $this->resource::getByCpfCnpj('52693212030');
+        $some = is_array($response) && count($response) > 0;
+        $this->assertTrue($some);
     }
 
     /**

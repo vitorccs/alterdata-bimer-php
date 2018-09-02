@@ -23,7 +23,7 @@ class Bimer
     private static $tokenDuration       = 10; // token duration in minutes
 
     private static $token               = null;
-    private static $sdkVersion          = 0.9;
+    private static $sdkVersion          = 1.0;
     private static $tokenTimestamp      = 0;
 
     public static function getApiUrl()
