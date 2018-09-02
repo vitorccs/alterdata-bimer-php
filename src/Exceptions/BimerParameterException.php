@@ -1,9 +1,7 @@
 <?php
 namespace Bimer\Exceptions;
 
-use Exception;
-
-class BimerParameterException extends Exception {
+class BimerParameterException extends BimerException {
 
 }
 ?>
