@@ -6,7 +6,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 
 use Bimer\Exceptions\BimerRequestException;
-use Bimer\Exceptions\BimerValidationException;
+use Bimer\Exceptions\BimerApiException;
 
 class Api
 {
@@ -44,7 +44,13 @@ class Api
 
         $response = $this->post('/oauth/token', $params);
 
-        $this->client->setToken($response->access_token);
+        $token = $response->access_token ?? null;
+
+        if (is_null($token)) {
+            throw new BimerRequestException("Unable to authenticate");
+        }
+
+        $this->client->setToken($token);
     }
 
     private function setFullEndpoint(string &$endpoint = null)
@@ -100,7 +106,7 @@ class Api
 
         if ($statusClass === 4 || $statusClass === 5) {
             if ($this->ignoreException($data)) return;
-            $this->checkForValidationException($data);
+            $this->checkForApiException($data);
             $this->checkForRequestException($response, $data);
         }
     }
@@ -116,25 +122,25 @@ class Api
             POST (parameter error)      | 422 Unprocessable Entity  | -1
             PUT/id (parameter error)    | 422 Unprocessable Entity  | -1
     */
-    private function checkForValidationException(\stdClass $data = null)
+    private function checkForApiException(\stdClass $data = null)
     {
         $hasErrors = isset($data->Erros) &&
                         isset($data->Erros[0]) &&
                         isset($data->Erros[0]->ErrorMessage);
 
         if ($hasErrors) {
-            throw new BimerValidationException($data->Erros[0]->ErrorMessage);
+            $code = $data->Erros[0]->ErrorCode ?? null;
+
+            throw new BimerApiException($data->Erros[0]->ErrorMessage, $code);
         }
     }
 
     private function checkForRequestException(ResponseInterface $response, \stdClass $data = null)
     {
-        $code        = $response->getStatusCode();
-        $reason      = $response->getReasonPhrase();
-        $description = isset($data->error_description) ? $data->error_description : '';
-        $message     = "{$code} ($reason) {$description}";
+        $code       = $response->getStatusCode();
+        $message    = $data->error_description ?? $response->getReasonPhrase();
 
-        throw new BimerRequestException($message);
+        throw new BimerRequestException($message, $code);
     }
 
     private function ignoreException(\stdClass $data = null)

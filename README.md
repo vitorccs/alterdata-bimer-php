@@ -74,6 +74,9 @@ putenv('BIMER_API_SECRET=client_secret');
 putenv('BIMER_API_USER=username');
 putenv('BIMER_API_PWD=password');
 
+use Bimer\Exceptions\BimerApiException;
+use Bimer\Exceptions\BimerRequestException;
+
 try {
     $characteristics = Bimer\PersonCharacteristic::all();
     print_r($characteristics); // array of objects
@@ -105,11 +108,13 @@ try {
     ]);
     print_r($customer); // object
 
-} catch (\Exception $e) {
-    die("Error: ". $e->getMessage() ."\n");
+} catch (BimerApiException $e) { // erros retornados pela API Bimer
+    echo sprintf("%s (%s)", $e->getMessage(), $e->getErrorCode());
+} catch (BimerRequestException $e) { // erros de servidor (erros HTTP 4xx e 5xx)
+    echo sprintf("%s (%s)", $e->getMessage(), $e->getErrorCode());
+} catch (\Exception $e) { // demais erros
+    echo 'aqui'.$e->getMessage();
 }
-
-die("Success \n");
 ```
 
 
