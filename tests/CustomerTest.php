@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
-use Bimer\Exceptions\BimerValidationException;
+use Bimer\Exceptions\BimerApiException;
 
 class CustomerTest extends ResourceTest
 {
@@ -20,7 +20,7 @@ class CustomerTest extends ResourceTest
     public function it_should_not_create_a_resource()
     {
         $invalidParameters = [];
-        $this->expectException(BimerValidationException::class);
+        $this->expectException(BimerApiException::class);
         $this->resource::create($invalidParameters);
     }
 

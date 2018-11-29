@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
-use Bimer\Exceptions\BimerValidationException;
+use Bimer\Exceptions\BimerApiException;
 
 class PostalCodeTest extends ResourceTest
 {
@@ -16,7 +16,7 @@ class PostalCodeTest extends ResourceTest
     /** @test */
     public function it_should_validate_code()
     {
-        $this->expectException(BimerValidationException::class);
+        $this->expectException(BimerApiException::class);
 
         $response = $this->resource::getByCode('0');
     }
