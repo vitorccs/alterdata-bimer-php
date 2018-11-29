@@ -113,7 +113,7 @@ try {
 } catch (BimerRequestException $e) { // erros de servidor (erros HTTP 4xx e 5xx)
     echo sprintf("%s (%s)", $e->getMessage(), $e->getErrorCode());
 } catch (\Exception $e) { // demais erros
-    echo 'aqui'.$e->getMessage();
+    echo $e->getMessage();
 }
 ```
 
