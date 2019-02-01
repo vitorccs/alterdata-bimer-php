@@ -121,6 +121,7 @@ try {
 ## Métodos implementados
 * CEP (PostalCode)
 * Cliente (Customer)
+* NaturezaLancamento (AccountInformation)
 * Pessoa (Person)
 * PessoaCaracteristica (PersonCharacteristic)
 * Titulos a Receber (Income)
