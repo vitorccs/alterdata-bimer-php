@@ -52,7 +52,7 @@ class PersonTest extends ResourceTest
     }
 
     /** @test */
-    public function it_should_retrieve_none_by_cpf_cnpjj()
+    public function it_should_retrieve_none_by_cpf_cnpj()
     {
         $response = $this->resource::getByCpfCnpj('537.220.560-12');
         $empty = is_array($response) && count($response) == 0;
