@@ -125,6 +125,7 @@ try {
 * Pessoa (Person)
 * PessoaCaracteristica (PersonCharacteristic)
 * Titulos a Receber (Income)
+* TiposLogradouro (AreaType)
 
 ... por favor, contribua com mais implementações
 

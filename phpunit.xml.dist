@@ -27,5 +27,6 @@
         <env name="BIMER_API_USER" value="username"/>
         <env name="BIMER_API_PWD" value="password"/>
         <env name="BIMER_API_TIMEOUT" value="30"/>
+        <env name="DATA" value='{"cpfCnpj":"36.462.778/0001-60"}' />
     </php>
 </phpunit>

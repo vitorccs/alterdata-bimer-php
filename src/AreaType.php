@@ -1,15 +1,14 @@
 <?php
 namespace Bimer;
 
-
-use Bimer\Exceptions\BimerApiException;
 use Bimer\Http\Resource;
+use Bimer\Exceptions\BimerApiException;
 
-class AccountInformation extends Resource
+class AreaType extends Resource
 {
     public static function endpoint()
     {
-        return 'naturezasLancamento';
+        return 'tiposLogradouro';
     }
 
     public static function getByDescription($description, $anyPart = true)
@@ -23,6 +22,6 @@ class AccountInformation extends Resource
             'porTrecho' => ($anyPart ? 'true' : 'false')
         ];
 
-        return static::all($params);
+        return static::all($params, "porDescricao");
     }
 }
