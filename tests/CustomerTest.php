@@ -3,17 +3,14 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
+use Bimer\Customer;
 use Bimer\Exceptions\BimerApiException;
 
 class CustomerTest extends ResourceTest
 {
     public function setUp()
     {
-        $this->resource = 'Bimer\Customer';
-        $this->endpoint = 'clientes';
-        $this->data = [
-            'Nome' => 'Creating Customer #'. rand()
-        ];
+        $this->resource = Customer::class;
     }
 
     /** @test */
@@ -22,12 +19,5 @@ class CustomerTest extends ResourceTest
         $invalidParameters = [];
         $this->expectException(BimerApiException::class);
         $this->resource::create($invalidParameters);
-    }
-
-    /** @test */
-    public function it_should_create_a_resource()
-    {
-        $customer = $this->resource::create($this->data);
-        $this->assertObjectHasAttribute('Identificador', $customer);
     }
 }

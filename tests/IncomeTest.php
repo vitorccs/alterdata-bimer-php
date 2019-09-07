@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
+use Bimer\Income;
+
 class IncomeTest extends ResourceTest
 {
     public function setUp()
     {
-        $this->resource = 'Bimer\Income';
-        $this->endpoint = 'titulosAReceber';
+        $this->resource = Income::class;
+
         $this->data     = [
         	'CodigoEmpresa'                => '1',
         	'IdentificadorPessoa'          => '00A000000A',
@@ -21,7 +23,7 @@ class IncomeTest extends ResourceTest
     /** @test */
     public function it_should_create_a_resource()
     {
-        $incomeId = \Bimer\Income::create($this->data);
+        $incomeId = Income::create($this->data);
 
         $this->assertTrue(strlen($incomeId) > 1);
 
