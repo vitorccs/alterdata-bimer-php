@@ -2,25 +2,81 @@
 
 namespace Bimer\Helpers;
 
+
 class Validator
 {
-    public static function validateCpf($cpf)
+    /**
+     * The CPF chars length
+     */
+    CONST CPF_CHARS_LENGTH = 11;
+
+    /**
+     * The CNPJ chars length
+     */
+    const CNPJ_CHARS_LENGTH = 14;
+
+    /**
+     * The Postal Code chars length
+     */
+    const POSTAL_CODE_LENGTH = 8;
+
+    /**
+     * @param string|int|null $value
+     * @return string|null
+     */
+    public static function unmask($value = null): string
     {
-        // Verifica se um número foi informado
-        if (empty($cpf)) {
-            return true;
-        }
+        return Sanitizer::cleanNumeric($value);
+    }
 
-        // Elimina possivel mascara
-        $cpf = preg_replace('/[^0-9]/', '', $cpf);
-        $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+    /**
+     * @param string|int|null $cnpj
+     * @return bool
+     */
+    public static function validateCnpj($cnpj): bool
+    {
+        $cnpj = self::unmask($cnpj);
 
-        // Verifica se o numero de digitos informados é igual a 11
-        if (strlen($cpf) != 11) {
+        if (strlen($cnpj) !== self::CNPJ_CHARS_LENGTH) {
             return false;
         }
-        // Verifica se nenhuma das sequências invalidas abaixo
-        // foi digitada. Caso afirmativo, retorna falso
+
+        // validate first verifying digit
+        for ($i = 0, $j = 5, $sum = 0; $i < 12; $i++) {
+            $sum += $cnpj[$i] * $j;
+            $j = ($j == 2) ? 9 : $j - 1;
+        }
+
+        $remainder = $sum % 11;
+
+        if ($cnpj[12] != ($remainder < 2 ? 0 : 11 - $remainder)) {
+            return false;
+        }
+
+        // validate second verifying digit
+        for ($i = 0, $j = 6, $sum = 0; $i < 13; $i++) {
+            $sum += $cnpj[$i] * $j;
+            $j = ($j == 2) ? 9 : $j - 1;
+        }
+
+        $remainder = $sum % 11;
+
+        return $cnpj[13] == ($remainder < 2 ? 0 : 11 - $remainder);
+    }
+
+    /**
+     * @param string|int|null $cpf
+     * @return bool
+     */
+    public static function validateCpf($cpf): bool
+    {
+        $cpf = self::unmask($cpf);
+
+        if (strlen($cpf) !== self::CPF_CHARS_LENGTH) {
+            return false;
+        }
+
+        // check for invalid list of numbers
         elseif ($cpf == '00000000000' ||
             $cpf == '11111111111' ||
             $cpf == '22222222222' ||
@@ -32,8 +88,7 @@ class Validator
             $cpf == '88888888888' ||
             $cpf == '99999999999') {
             return false;
-            // Calcula os digitos verificadores para verificar se o
-         // CPF é válido
+            // validate verifying digit
         } else {
             for ($t = 9; $t < 11; $t++) {
                 for ($d = 0, $c = 0; $c < $t; $c++) {
@@ -49,45 +104,22 @@ class Validator
         }
     }
 
-    public static function validateCnpj($cnpj)
+    /**
+     * @param string|int|null $value
+     * @return bool
+     */
+    public static function validateCpfCnpj($value): bool
     {
-        if (empty($cnpj)) {
-            return true;
-        }
-
-        $cnpj = preg_replace('/[^0-9]/', '', (string) $cnpj);
-
-        // Valida tamanho
-        if (strlen($cnpj) != 14) {
-            return false;
-        }
-
-        // Valida primeiro dígito verificador
-        for ($i = 0, $j = 5, $soma = 0; $i < 12; $i++) {
-            $soma += $cnpj[$i] * $j;
-            $j = ($j == 2) ? 9 : $j - 1;
-        }
-        $resto = $soma % 11;
-        if ($cnpj[12] != ($resto < 2 ? 0 : 11 - $resto)) {
-            return false;
-        }
-        // Valida segundo dígito verificador
-        for ($i = 0, $j = 6, $soma = 0; $i < 13; $i++) {
-            $soma += $cnpj[$i] * $j;
-            $j = ($j == 2) ? 9 : $j - 1;
-        }
-        $resto = $soma % 11;
-        return $cnpj[13] == ($resto < 2 ? 0 : 11 - $resto);
+        return self::validateCpf($value) || self::validateCnpj($value);
     }
 
-    public static function validateCpfCnpj($string)
+    /**
+     * @param string|int|null $value
+     * @return bool
+     */
+    public static function validatePostalCode($value): bool
     {
-        return (static::validateCpf($string) || static::validateCnpj($string));
-    }
-
-    public static function validatePostalCode($code)
-    {
-        $code = Sanitizer::cleanNumeric($code);
-        return (strlen($code) == 8);
+        $value = Sanitizer::cleanNumeric($value);
+        return strlen($value) === self::POSTAL_CODE_LENGTH;
     }
 }
