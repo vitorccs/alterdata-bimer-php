@@ -39,7 +39,7 @@ final class BimerTest extends TestCase
     /** @test */
     public function it_should_set_token()
     {
-        $random = rand();
+        $random = (string)rand();
         Bimer::setToken($random);
         $value = Bimer::getToken();
         $this->assertEquals($value, $random);

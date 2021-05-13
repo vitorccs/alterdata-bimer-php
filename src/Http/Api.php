@@ -1,41 +1,58 @@
 <?php
+
 namespace Bimer\Http;
 
 use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
-
 use Bimer\Exceptions\BimerRequestException;
 use Bimer\Exceptions\BimerApiException;
 
 class Api
 {
+    /**
+     * @var Client
+     */
     protected $client;
+
+    /**
+     * @var string
+     */
     protected $endpoint;
 
+    /**
+     * @param string $endpoint
+     */
     public function __construct(string $endpoint)
     {
         $this->client = new Client();
         $this->endpoint = $endpoint;
     }
 
-    private function checkAuth()
+    /**
+     * @throws BimerRequestException
+     * @throws BimerApiException
+     */
+    private function checkAuth(): void
     {
         if (!$this->client->getToken()) {
             $this->auth();
         }
     }
 
-    private function auth()
+    /**
+     * @throws BimerRequestException
+     * @throws BimerApiException
+     */
+    private function auth(): void
     {
         $credentials = $this->client->getCredentials();
 
         $random = rand(1, 9999);
 
         $form_params = array_merge($credentials, [
-            'grant_type'   => 'password',
-            'nonce'        => $random,
-            'password'     => md5($credentials['username'].$random.$credentials['password'])
+            'grant_type' => 'password',
+            'nonce' => $random,
+            'password' => md5($credentials['username'] . $random . $credentials['password'])
         ]);
 
         $params = [
@@ -53,20 +70,34 @@ class Api
         $this->client->setToken($token);
     }
 
-    private function setFullEndpoint(string &$endpoint = null)
+    /**
+     * @param string|null $endpoint
+     */
+    private function setFullEndpoint(string &$endpoint = null): void
     {
-        $endpoint = $this->endpoint .'/'. $endpoint;
+        $endpoint = $this->endpoint . '/' . $endpoint;
     }
 
-    private function setAuthHeaders(array &$options = [])
+    /**
+     * @param array $options
+     */
+    private function setAuthHeaders(array &$options = []): void
     {
         $options = array_merge($options, [
             'headers' => [
-                'Authorization' => 'Bearer '. $this->client->getToken()
+                'Authorization' => 'Bearer ' . $this->client->getToken()
             ]
         ]);
     }
 
+    /**
+     * @param string $method
+     * @param string|null $endpoint
+     * @param array $options
+     * @return mixed
+     * @throws BimerRequestException
+     * @throws BimerApiException
+     */
     public function request(string $method, string $endpoint = null, array $options = [])
     {
         if ($endpoint != '/oauth/token') {
@@ -88,6 +119,12 @@ class Api
         return $this->response($response);
     }
 
+    /**
+     * @param ResponseInterface $response
+     * @return mixed
+     * @throws BimerApiException
+     * @throws BimerRequestException
+     */
     public function response(ResponseInterface $response)
     {
         $content = $response->getBody()->getContents();
@@ -99,10 +136,16 @@ class Api
         return $data;
     }
 
-    private function checkForErrors(ResponseInterface $response, \stdClass $data = null)
+    /**
+     * @param ResponseInterface $response
+     * @param \stdClass|null $data
+     * @throws BimerApiException
+     * @throws BimerRequestException
+     */
+    private function checkForErrors(ResponseInterface $response, \stdClass $data = null): void
     {
-        $code           = $response->getStatusCode();
-        $statusClass    = (int) ($code / 100);
+        $code = $response->getStatusCode();
+        $statusClass = (int)($code / 100);
 
         if ($statusClass === 4 || $statusClass === 5) {
             if ($this->ignoreException($data)) return;
@@ -115,18 +158,22 @@ class Api
         Since Bimer API always responds with a 400 HTTP for all the following,
         we then need to trust on its "ErrorCode" parameter
 
-            Resouce error               | REST specification        | Bimer ErrorCode
-            -------------------------------------------------------------------------
-            Get (no resource found)     | 200 OK                    | C01
-            Get/id (no resource found)  | 404 Not Found             | C01
-            POST (parameter error)      | 422 Unprocessable Entity  | -1
-            PUT/id (parameter error)    | 422 Unprocessable Entity  | -1
+        Resource error               | REST specification        | Bimer ErrorCode
+        -------------------------------------------------------------------------
+        Get (no resource found)     | 200 OK                    | C01
+        Get/id (no resource found)  | 404 Not Found             | C01
+        POST (parameter error)      | 422 Unprocessable Entity  | -1
+        PUT/id (parameter error)    | 422 Unprocessable Entity  | -1
     */
-    private function checkForApiException(\stdClass $data = null)
+    /**
+     * @param \stdClass|null $data
+     * @throws BimerApiException
+     */
+    private function checkForApiException(\stdClass $data = null): void
     {
         $hasErrors = isset($data->Erros) &&
-                        isset($data->Erros[0]) &&
-                        isset($data->Erros[0]->ErrorMessage);
+            isset($data->Erros[0]) &&
+            isset($data->Erros[0]->ErrorMessage);
 
         if ($hasErrors) {
             $code = $data->Erros[0]->ErrorCode ?? null;
@@ -135,39 +182,76 @@ class Api
         }
     }
 
-    private function checkForRequestException(ResponseInterface $response, \stdClass $data = null)
+    /**
+     * @param ResponseInterface $response
+     * @param \stdClass|null $data
+     * @throws BimerRequestException
+     */
+    private function checkForRequestException(ResponseInterface $response, \stdClass $data = null): void
     {
-        $code       = $response->getStatusCode();
-        $message    = $data->error_description ?? $response->getReasonPhrase();
+        $code = $response->getStatusCode();
+        $message = $data->error_description ?? $response->getReasonPhrase();
 
         throw new BimerRequestException($message, $code);
     }
 
-    private function ignoreException(\stdClass $data = null)
+    /**
+     * @param \stdClass|null $data
+     * @return bool
+     */
+    private function ignoreException(\stdClass $data = null): bool
     {
         $isGetNotFound = isset($data->Erros) &&
-                         isset($data->Erros[0]) &&
-                         isset($data->Erros[0]->ErrorCode) &&
-                         $data->Erros[0]->ErrorCode == 'C01';
+            isset($data->Erros[0]) &&
+            isset($data->Erros[0]->ErrorCode) &&
+            $data->Erros[0]->ErrorCode == 'C01';
 
         return $isGetNotFound;
     }
 
+    /**
+     * @param string|null $endpoint
+     * @param array $options
+     * @return mixed
+     * @throws BimerRequestException
+     * @throws BimerApiException
+     */
     public function get(string $endpoint = null, array $options = [])
     {
         return $this->request('GET', $endpoint, $options);
     }
 
+    /**
+     * @param string|null $endpoint
+     * @param array $options
+     * @return mixed
+     * @throws BimerRequestException
+     * @throws BimerApiException
+     */
     public function post(string $endpoint = null, array $options = [])
     {
         return $this->request('POST', $endpoint, $options);
     }
 
+    /**
+     * @param string $endpoint
+     * @param array $options
+     * @return mixed
+     * @throws BimerRequestException
+     * @throws BimerApiException
+     */
     public function put(string $endpoint, array $options = [])
     {
         return $this->request('PUT', $endpoint, $options);
     }
 
+    /**
+     * @param string $endpoint
+     * @param array $options
+     * @return mixed
+     * @throws BimerRequestException
+     * @throws BimerApiException
+     */
     public function delete(string $endpoint, array $options = [])
     {
         return $this->request('PUT', $endpoint, $options);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Bimer;
 
 use Bimer\Http\Resource;
@@ -8,12 +9,22 @@ use Bimer\Exceptions\BimerApiException;
 
 class Person extends Resource
 {
-    public static function endpoint()
+    /**
+     * @return string
+     */
+    public static function endpoint(): string
     {
         return 'pessoas';
     }
 
-    public static function getByName($name, $anyPart = true)
+    /**
+     * @param $name
+     * @param bool $anyPart
+     * @return array|false|mixed|null
+     * @throws BimerApiException
+     * @throws Exceptions\BimerRequestException
+     */
+    public static function getByName($name, bool $anyPart = true)
     {
         // Bimer API does not validate "name" parameter. So an empty "name"
         // parameter combined with "anyPart" might try to return the entire table!
@@ -22,13 +33,17 @@ class Person extends Resource
         }
 
         $params = [
-            'nome'      => $name,
+            'nome' => $name,
             'porTrecho' => ($anyPart ? 'true' : 'false')
         ];
 
         return static::all($params, 'porNome');
     }
 
+    /**
+     * @throws BimerApiException
+     * @throws Exceptions\BimerRequestException
+     */
     public static function getByCpfCnpj($cpfCnpj, $validate = true)
     {
         // Bimer API does not validate "cpfCnpj" parameter, so by performing
@@ -40,7 +55,7 @@ class Person extends Resource
         $cpfCnpj = Sanitizer::cleanNumeric($cpfCnpj);
 
         $params = [
-            'cpfCnpj'   => $cpfCnpj
+            'cpfCnpj' => $cpfCnpj
         ];
 
         return static::all($params);
