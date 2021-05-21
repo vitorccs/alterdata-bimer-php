@@ -3,6 +3,8 @@
 namespace Bimer;
 
 use Bimer\Exceptions\BimerApiException;
+use Bimer\Exceptions\BimerParameterException;
+use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
 
 class AccountInformation extends Resource
@@ -16,13 +18,14 @@ class AccountInformation extends Resource
     }
 
     /**
-     * @param $description
+     * @param string $description
      * @param bool $anyPart
-     * @return array|false|mixed|null
+     * @return array
      * @throws BimerApiException
-     * @throws Exceptions\BimerRequestException
+     * @throws BimerRequestException
+     * @throws BimerParameterException
      */
-    public static function getByDescription($description, bool $anyPart = true)
+    public static function getByDescription(string $description, bool $anyPart = true)
     {
         if (strlen($description) < 1) {
             throw new BimerApiException('The parameter "description" is required');

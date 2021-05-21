@@ -2,6 +2,8 @@
 
 namespace Bimer;
 
+use Bimer\Exceptions\BimerParameterException;
+use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
 use Bimer\Exceptions\BimerApiException;
 
@@ -17,12 +19,13 @@ class Customer extends Resource
 
     /**
      * @param array $params
-     * @param string|null $endpoint
-     * @return array|false|mixed|null
+     * @param string $endpoint
+     * @return \stdClass
      * @throws BimerApiException
-     * @throws Exceptions\BimerRequestException
+     * @throws BimerRequestException
+     * @throws BimerParameterException
      */
-    public static function create(array $params, string $endpoint = null)
+    public static function create(array $params, string $endpoint = '')
     {
         // NOTE: Bimer API makes no parameters validation
         // In case of invalid data, the HTTP will fail with 500 error code

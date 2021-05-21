@@ -2,6 +2,9 @@
 
 namespace Bimer;
 
+use Bimer\Exceptions\BimerApiException;
+use Bimer\Exceptions\BimerParameterException;
+use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
 
 class Income extends Resource
@@ -16,9 +19,10 @@ class Income extends Resource
 
     /**
      * @param array $params
-     * @return array|false|mixed|null
-     * @throws Exceptions\BimerApiException
-     * @throws Exceptions\BimerRequestException
+     * @return \stdClass
+     * @throws BimerApiException
+     * @throws BimerRequestException
+     * @throws BimerParameterException
      */
     public static function makeBatch(array $params)
     {

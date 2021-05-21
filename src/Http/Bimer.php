@@ -87,7 +87,7 @@ class Bimer
     /**
      * @var string
      */
-    private static $sdkVersion = "1.2.0";
+    private static $sdkVersion = "1.2.1";
 
     /**
      * The timestamp when token was generated
@@ -103,7 +103,7 @@ class Bimer
     public static function getApiUrl(): string
     {
         if (!static::$apiUrl) {
-            static::$apiUrl = getenv(static::BIMER_API_URL);
+            static::$apiUrl = getenv(static::BIMER_API_URL) ?: null;
         }
 
         if (!static::$apiUrl) {
@@ -120,7 +120,7 @@ class Bimer
     public static function getUsername(): ?string
     {
         if (!static::$username) {
-            static::$username = getenv(static::BIMER_API_USER);
+            static::$username = getenv(static::BIMER_API_USER) ?: null;
         }
 
         if (!static::$username) {
@@ -137,7 +137,7 @@ class Bimer
     public static function getPassword(): string
     {
         if (!static::$password) {
-            static::$password = getenv(static::BIMER_API_PWD);
+            static::$password = getenv(static::BIMER_API_PWD) ?: null;
         }
 
         if (!static::$password) {
@@ -154,7 +154,7 @@ class Bimer
     public static function getClientId(): ?string
     {
         if (!static::$clientId) {
-            static::$clientId = getenv(static::BIMER_API_ID);
+            static::$clientId = getenv(static::BIMER_API_ID) ?: null;
         }
 
         if (!static::$clientId) {
@@ -171,7 +171,7 @@ class Bimer
     public static function getClientSecret(): string
     {
         if (!static::$clientSecret) {
-            static::$clientSecret = getenv(static::BIMER_API_SECRET);
+            static::$clientSecret = getenv(static::BIMER_API_SECRET) ?: null;
         }
 
         if (!static::$clientSecret) {

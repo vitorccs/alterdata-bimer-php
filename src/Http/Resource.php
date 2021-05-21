@@ -3,6 +3,7 @@
 namespace Bimer\Http;
 
 use Bimer\Exceptions\BimerApiException;
+use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
 
 abstract class Resource
@@ -24,12 +25,13 @@ abstract class Resource
      * Get array of objects
      *
      * @param array $params
-     * @param string|null $endpoint
-     * @return array|false|mixed|null
+     * @param string $endpoint
+     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
+     * @throws BimerParameterException
      */
-    public static function all(array $params = [], string $endpoint = null)
+    public static function all(array $params = [], string $endpoint = '')
     {
         return static::get($endpoint, $params, false);
     }
@@ -38,7 +40,7 @@ abstract class Resource
      * Get element by ID
      *
      * @param $id
-     * @return array|false|mixed|null
+     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      */
@@ -50,14 +52,15 @@ abstract class Resource
     /**
      * Make a GET connection
      *
-     * @param string|null $endpoint
+     * @param string $endpoint
      * @param array $params
      * @param bool $single
-     * @return array|false|mixed|null
+     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
+     * @throws BimerParameterException
      */
-    public static function get(string $endpoint = null, array $params = [], bool $single = true)
+    public static function get(string $endpoint = '', array $params = [], bool $single = true)
     {
         $data = static::api()->get($endpoint, ['query' => $params]);
 
@@ -69,9 +72,10 @@ abstract class Resource
      * Create or Update element
      *
      * @param array $params
-     * @return array|false|mixed|null
+     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
+     * @throws BimerParameterException
      */
     public static function save(array $params)
     {
@@ -86,12 +90,13 @@ abstract class Resource
      * Create element
      *
      * @param array $params
-     * @param string|null $endpoint
-     * @return array|false|mixed|null
+     * @param string $endpoint
+     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
+     * @throws BimerParameterException
      */
-    public static function create(array $params, string $endpoint = null)
+    public static function create(array $params, string $endpoint = '')
     {
         $data = static::api()->post($endpoint, ['json' => $params]);
 
@@ -103,9 +108,10 @@ abstract class Resource
      *
      * @param string $id
      * @param array $params
-     * @return array|false|mixed|null
+     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
+     * @throws BimerParameterException
      */
     public static function update(string $id, array $params)
     {
@@ -119,9 +125,10 @@ abstract class Resource
      *
      * @param string $id
      * @param array $params
-     * @return array|false|mixed|null
+     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
+     * @throws BimerParameterException
      */
     public static function delete(string $id, array $params = [])
     {
@@ -135,7 +142,7 @@ abstract class Resource
      *
      * @param mixed $response
      * @param bool $single
-     * @return array|false|mixed|null
+     * @return mixed
      */
     private static function normalizeData($response, bool $single = true)
     {
