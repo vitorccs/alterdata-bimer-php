@@ -43,6 +43,7 @@ abstract class Resource
      * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
+     * @throws BimerParameterException
      */
     public static function find($id)
     {
