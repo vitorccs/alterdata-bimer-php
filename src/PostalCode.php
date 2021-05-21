@@ -2,6 +2,8 @@
 
 namespace Bimer;
 
+use Bimer\Exceptions\BimerParameterException;
+use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
 use Bimer\Helpers\Sanitizer;
 use Bimer\Helpers\Validator;
@@ -20,9 +22,10 @@ class PostalCode extends Resource
     /**
      * @param $code
      * @param bool $validate
-     * @return array|false|mixed|null
+     * @return mixed
      * @throws BimerApiException
-     * @throws Exceptions\BimerRequestException
+     * @throws BimerRequestException
+     * @throws BimerParameterException
      */
     public static function getByCode($code, bool $validate = true)
     {

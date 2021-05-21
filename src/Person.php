@@ -2,6 +2,8 @@
 
 namespace Bimer;
 
+use Bimer\Exceptions\BimerParameterException;
+use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
 use Bimer\Helpers\Sanitizer;
 use Bimer\Helpers\Validator;
@@ -18,13 +20,14 @@ class Person extends Resource
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param bool $anyPart
-     * @return array|false|mixed|null
+     * @return array
      * @throws BimerApiException
-     * @throws Exceptions\BimerRequestException
+     * @throws BimerRequestException
+     * @throws BimerParameterException
      */
-    public static function getByName($name, bool $anyPart = true)
+    public static function getByName(string $name, bool $anyPart = true)
     {
         // Bimer API does not validate "name" parameter. So an empty "name"
         // parameter combined with "anyPart" might try to return the entire table!
@@ -41,10 +44,14 @@ class Person extends Resource
     }
 
     /**
+     * @param string|int $cpfCnpj
+     * @param bool $validate
+     * @return array
      * @throws BimerApiException
-     * @throws Exceptions\BimerRequestException
+     * @throws BimerRequestException
+     * @throws BimerParameterException
      */
-    public static function getByCpfCnpj($cpfCnpj, $validate = true)
+    public static function getByCpfCnpj($cpfCnpj, bool $validate = true)
     {
         // Bimer API does not validate "cpfCnpj" parameter, so by performing
         // local validation we save server resources

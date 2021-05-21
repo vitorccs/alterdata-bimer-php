@@ -1,4 +1,5 @@
 <?php
+
 namespace Bimer;
 
 use Bimer\Http\Resource;
