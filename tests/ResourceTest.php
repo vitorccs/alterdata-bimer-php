@@ -7,11 +7,11 @@ use PHPUnit\Framework\TestCase;
 
 class ResourceTest extends TestCase
 {
-    protected $data;
+    protected $incomeData;
 
     protected $resource;
 
-    public function it_should_have_an_endpoint()
+    public function testEndpoint()
     {
         $this->assertNotEmpty($this->resource::endpoint());
     }

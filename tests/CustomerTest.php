@@ -8,13 +8,12 @@ use Bimer\Exceptions\BimerApiException;
 
 class CustomerTest extends ResourceTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->resource = Customer::class;
     }
 
-    /** @test */
-    public function it_should_not_create_a_resource()
+    public function testCreateCustomer()
     {
         $invalidParameters = [];
         $this->expectException(BimerApiException::class);

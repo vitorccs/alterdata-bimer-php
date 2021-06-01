@@ -4,121 +4,141 @@ declare(strict_types=1);
 namespace Bimer\Test;
 
 use Bimer\Exceptions\BimerApiException;
+use Bimer\Exceptions\BimerParameterException;
+use Bimer\Exceptions\BimerRequestException;
 use Bimer\Person;
 
 class PersonTest extends ResourceTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->resource = Person::class;
 
-        $this->data = (array)json_decode(getenv('DATA'));
+        $this->incomeData = (array)json_decode(getenv('DATA_PERSON'));
     }
 
-    /** @test */
-    public function it_should_validate_name()
+    public function testValidateName()
     {
         $this->expectException(BimerApiException::class);
 
-        $response = $this->resource::getByName('a');
+        $this->resource::getByName('a');
     }
 
-    /** @test */
-    public function it_should_retrieve_by_name()
+    public function testGetByName()
     {
         $response = $this->resource::getByName('NOME');
 
+        $this->assertIsArray($response);
         $this->assertGreaterThanOrEqual(0, count($response));
     }
 
-    /** @test */
-    public function it_should_validate_cpf_cnpj()
+    public function testValidateCpfCnpj()
     {
         $this->expectException(BimerApiException::class);
 
-        $response = $this->resource::getByCpfCnpj('123.456.789-01');
-        $this->assertGreaterThanOrEqual(0, count($response));
-    }
-
-    /** @test */
-    public function it_should_create_a_resource()
-    {
-        $customer = \Bimer\Customer::create([
-            'Nome' => 'Customer #' . rand(),
-            'CpfCnpj' => GeneratorHelper::cpfRandom(0),
-            'Enderecos' => [
-                [
-                    'TipoCadastro' => 'I',
-                    'CEP' => '22060020',
-                    'IdentificadorBairro' => '00A00001R7',
-                    'IdentificadorCidade' => '00A000059E',
-                    'NomeLogradouro' => 'RUA LEOPOLDO MIGUEZ 99/202',
-                    'IdentificadorTipoLogradouro' => '00A0000006',
-                    'SiglaUnidadeFederativa' => 'SP',
-                    'Tipos' => [
-                        'Principal' => true
-                    ]
-                ]
-            ]
-        ]);
-
-        $this->assertObjectHasAttribute('Identificador', $customer);
-
-        return $customer;
-    }
-
-    /** @test */
-    public function it_should_retrieve_none_by_cpf_cnpj()
-    {
-        $randomCpf = GeneratorHelper::cpfRandom(0);
-        $response = $this->resource::getByCpfCnpj($randomCpf);
-        $empty = is_array($response) && count($response) == 0;
-        $this->assertTrue($empty);
-    }
-
-    /** @test */
-    public function it_should_retrieve_some_by_cpf_cnpj()
-    {
-        $response = $this->resource::getByCpfCnpj($this->data['cpfCnpj']);
-        $some = is_array($response) && count($response) > 0;
-        $this->assertTrue($some);
+        $this->resource::getByCpfCnpj('123.456.789-01');
     }
 
     /**
-     * @depends it_should_create_a_resource
-     * @test
+     * @dataProvider addressData
      */
-    public function it_should_find_one_resource($customer)
+    public function testCreatePerson(array $addressData)
     {
+        $customer = $this->createCustomer($addressData);
+
+        $this->assertObjectHasAttribute('Identificador', $customer);
+    }
+
+    public function testGetEmptyCpfCnpj()
+    {
+        $randomCpf = GeneratorHelper::cpfRandom(false);
+        $response = $this->resource::getByCpfCnpj($randomCpf);
+
+        $this->assertIsArray($response);
+        $this->assertEmpty($response);
+    }
+
+    public function testGetSomeCpfCnpj()
+    {
+        $response = $this->resource::getByCpfCnpj($this->incomeData['cpfCnpj']);
+
+        $this->assertIsArray($response);
+        $this->assertNotEmpty($response);
+    }
+
+    /**
+     * @dataProvider addressData
+     */
+    public function testGetById(array $addressData)
+    {
+        $customer = $this->createCustomer($addressData);
         $person = $this->resource::find($customer->Identificador);
         $this->assertObjectHasAttribute('Identificador', $person);
     }
 
     /**
-     * @depends it_should_create_a_resource
-     * @test
+     * @dataProvider addressData
      */
-    public function it_should_update_address($customer)
+    public function testChangePersonData(array $addressData)
     {
+        $customer = $this->createCustomer($addressData);
+
+        $placeholder = 'CHANGE TEST';
         $data = [
-            'Nome' => 'Changed2',
+            'Nome' => $placeholder,
             'Enderecos' => [
-                [
+                array_merge($addressData, [
                     'Codigo' => '01',
                     'TipoCadastro' => 'A',
-                    'CEP' => '22060020',
-                    'IdentificadorBairro' => '00A00001R7',
-                    'IdentificadorCidade' => '00A000059E',
-                    'NomeLogradouro' => 'Changed2',
+                    'NomeLogradouro' => $placeholder,
                     'Tipos' => [
                         'Principal' => true
                     ]
-                ]
+                ])
             ]
         ];
-
         $person = $this->resource::update($customer->Identificador, $data);
-        $this->assertSame($person->Nome, strtoupper('Changed2'));
-        $this->assertSame($person->Enderecos[0]->NomeLogradouro, 'Changed2');
+
+        $this->assertSame($person->Nome, $placeholder);
+        $this->assertSame($person->Enderecos[0]->NomeLogradouro, $placeholder);
+    }
+
+    /**
+     * Data provider for Address Data
+     */
+    public function addressData(): array
+    {
+        $areaType = (array)json_decode(getenv('DATA_ADDRESS'));
+
+        return [
+            [
+                $areaType
+            ]
+        ];
+    }
+
+    /**
+     * @param array $addressData
+     * @return \stdClass
+     * @throws BimerApiException
+     * @throws BimerParameterException
+     * @throws BimerRequestException
+     */
+    private function createCustomer(array $addressData): \stdClass
+    {
+        return \Bimer\Customer::create([
+            'Nome' => 'Customer #' . rand(),
+            'CpfCnpj' => GeneratorHelper::cpfRandom(false),
+            'Enderecos' => [
+                array_merge($addressData, [
+                    'Codigo' => '01',
+                    'TipoCadastro' => 'I',
+                    'NomeLogradouro' => 'CREATE TEST',
+                    'Tipos' => [
+                        'Principal' => true
+                    ]
+                ])
+            ]
+        ]);
     }
 }

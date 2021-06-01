@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bimer\Test;
@@ -7,63 +8,79 @@ use Bimer\Income;
 
 class IncomeTest extends ResourceTest
 {
-    protected $batchData;
-
-    public function setUp()
+    public function setUp(): void
     {
         $this->resource = Income::class;
-
-        $this->data = [
-            'CodigoEmpresa' => '1',
-            'IdentificadorPessoa' => '00A000000A',
-            'IdentificadorFormaPagamento' => '00A0000001',
-            'CodigoEnderecoCobranca' => '01',
-            'ValorTitulo' => 100
-        ];
-
-        $this->batchData = [
-            "CodigoEmpresa" => 1,
-            "LoteAReceberItemBaixa" => [
-                [
-                    "IdentificadorTituloAReceber" => "",
-                    "IdentificadorFormaPagamento" => "00A0000001",
-                    "IdentificadorTipoBaixa" => "00A0000002",
-                    "IdentificadorContaBancaria" => "00A0000005"
-                ]
-            ]
-        ];
-    }
-
-    /** @test */
-    public function it_should_create_a_resource()
-    {
-        $incomeId = Income::create($this->data);
-
-        $this->assertTrue(strlen($incomeId) > 1);
-
-        return $incomeId;
     }
 
     /**
-     * @depends it_should_create_a_resource
-     * @test
+     * @dataProvider incomeData
      */
-    public function it_should_retrieve_resource($incomeId)
+    public function testCreateIncome(array $incomeData)
     {
+        $incomeId = Income::create($incomeData);
+
+        $this->assertNotEmpty($incomeId);
+    }
+
+    /**
+     * @dataProvider incomeData
+     */
+    public function testGetIncomeById(array $incomeData)
+    {
+        $incomeId = Income::create($incomeData);
         $income = $this->resource::find($incomeId);
+
         $this->assertObjectHasAttribute('Identificador', $income);
     }
 
     /**
-     * @depends it_should_create_a_resource
-     * @test
+     * @dataProvider batchData
      */
-    public function it_should_make_a_batch($incomeId)
+    public function testMakeIncomeBatch(array $incomeData, array $batchData)
     {
-        $this->batchData["LoteAReceberItemBaixa"][0]["IdentificadorTituloAReceber"] = $incomeId;
+        $incomeId = Income::create($incomeData);
 
-        $batch = Income::makeBatch($this->batchData);
+        $batchData["LoteAReceberItemBaixa"][0]->IdentificadorTituloAReceber = $incomeId;
+        $batch = Income::makeBatch($batchData);
 
         $this->assertObjectHasAttribute('IdentificadorLoteAReceber', $batch);
+    }
+
+    /**
+     * Data provider for Income Data
+     */
+    public function incomeData(): array
+    {
+        $incomeData = array_merge((array)json_decode(getenv('DATA_INCOME')), [
+            "NumeroTitulo" => random_int(10000, 999999),
+            "ValorTitulo" => 100
+        ]);
+
+        return [
+            [
+                $incomeData
+            ]
+        ];
+    }
+
+    /**
+     * Data provider for Batch Data
+     */
+    public function batchData(): array
+    {
+        $incomeData = array_merge((array)json_decode(getenv('DATA_INCOME')), [
+            "NumeroTitulo" => random_int(10000, 999999),
+            "ValorTitulo" => 100
+        ]);
+
+        $batchData = (array)json_decode(getenv('DATA_INCOME_BATCH'));
+
+        return [
+            [
+                $incomeData,
+                $batchData
+            ]
+        ];
     }
 }

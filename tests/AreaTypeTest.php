@@ -7,30 +7,42 @@ use Bimer\AreaType;
 
 class AreaTypeTest extends ResourceTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->resource = AreaType::class;
-
-        $this->data     = [
-            'description'   => 'RUA',
-            'id'            => '00A0000006'
-        ];
     }
 
-    /** @test */
-    public function it_should_get_by_description()
+    /**
+     * @dataProvider areaTypeData
+     */
+    public function testGetByDescription(array $areaType)
     {
-        $response = $this->resource::getByDescription($this->data['description']);
+        $response = $this->resource::getByDescription($areaType['description']);
 
         $this->assertGreaterThan(0, count($response));
-
-        $this->firstRecord = reset($response);
     }
 
-    /** @test */
-    public function it_should_get_by_id()
+    /**
+     * @dataProvider areaTypeData
+     */
+    public function testGetById(array $areaType)
     {
-        $accountInformation = $this->resource::find($this->data['id']);
+        $accountInformation = $this->resource::find($areaType['id']);
+
         $this->assertObjectHasAttribute('Identificador', $accountInformation);
+    }
+
+    /**
+     * Data provider for Area Type Data
+     */
+    public function areaTypeData(): array
+    {
+        $areaType = (array)json_decode(getenv('DATA_AREA_TYPE'));
+
+        return [
+            [
+                $areaType
+            ]
+        ];
     }
 }

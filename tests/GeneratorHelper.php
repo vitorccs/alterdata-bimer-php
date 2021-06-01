@@ -13,13 +13,10 @@ namespace Bimer\Test;
 class GeneratorHelper
 {
     /**
-     * Método para gerar CNPJ válido, com máscara ou não
-     * @param int $mascara
+     * @param bool $mascara
      * @return string
-     * @example cnpjRandom(0)
-     *          para retornar CNPJ sem máscar
      */
-    public static function cnpjRandom($mascara = "1")
+    public static function cnpjRandom(bool $mascara = true): string
     {
         $n1 = rand(0, 9);
         $n2 = rand(0, 9);
@@ -43,8 +40,7 @@ class GeneratorHelper
         if ($d2 >= 10) {
             $d2 = 0;
         }
-        $retorno = '';
-        if ($mascara == 1) {
+        if ($mascara) {
             $retorno = '' . $n1 . $n2 . "." . $n3 . $n4 . $n5 . "." . $n6 . $n7 . $n8 . "/" . $n9 . $n10 . $n11 . $n12 . "-" . $d1 . $d2;
         } else {
             $retorno = '' . $n1 . $n2 . $n3 . $n4 . $n5 . $n6 . $n7 . $n8 . $n9 . $n10 . $n11 . $n12 . $d1 . $d2;
@@ -53,13 +49,10 @@ class GeneratorHelper
     }
 
     /**
-     * Método para gerar CPF válido, com máscara ou não
-     * @param int $mascara
+     * @param bool $mascara
      * @return string
-     * @example cpfRandom(0)
-     *          para retornar CPF sem máscar
      */
-    public static function cpfRandom($mascara = "1")
+    public static function cpfRandom(bool $mascara = true): string
     {
         $n1 = rand(0, 9);
         $n2 = rand(0, 9);
@@ -80,8 +73,7 @@ class GeneratorHelper
         if ($d2 >= 10) {
             $d2 = 0;
         }
-        $retorno = '';
-        if ($mascara == 1) {
+        if ($mascara) {
             $retorno = '' . $n1 . $n2 . $n3 . "." . $n4 . $n5 . $n6 . "." . $n7 . $n8 . $n9 . "-" . $d1 . $d2;
         } else {
             $retorno = '' . $n1 . $n2 . $n3 . $n4 . $n5 . $n6 . $n7 . $n8 . $n9 . $d1 . $d2;
@@ -90,11 +82,11 @@ class GeneratorHelper
     }
 
     /**
-     * @param type $dividendo
-     * @param type $divisor
-     * @return type
+     * @param int $dividendo
+     * @param int $divisor
+     * @return float
      */
-    private static function mod($dividendo, $divisor)
+    private static function mod(int $dividendo, int $divisor)
     {
         return round($dividendo - (floor($dividendo / $divisor) * $divisor));
     }
