@@ -8,42 +8,44 @@ use Bimer\Http\Bimer;
 
 final class BimerTest extends TestCase
 {
-    /** @test */
-    public function it_should_get_vars_from_environment()
+    public function testSetBimerParameters()
     {
-        $envValue        = getenv(Bimer::BIMER_API_URL);
-        $bimmerValue    = Bimer::getApiUrl();
-        $this->assertEquals($bimmerValue, $envValue);
+        $envValue = getenv(Bimer::BIMER_API_URL);
+        $bimerValue = Bimer::getApiUrl();
+        $this->assertEquals($bimerValue, $envValue);
 
-        $envValue        = getenv(Bimer::BIMER_API_USER);
-        $bimmerValue    = Bimer::getUsername();
-        $this->assertEquals($bimmerValue, $envValue);
+        $envValue = getenv(Bimer::BIMER_API_USER);
+        $bimerValue = Bimer::getUsername();
+        $this->assertEquals($bimerValue, $envValue);
 
-        $envValue        = getenv(Bimer::BIMER_API_PWD);
-        $bimmerValue    = Bimer::getPassword();
-        $this->assertEquals($bimmerValue, $envValue);
+        $envValue = getenv(Bimer::BIMER_API_PWD);
+        $bimerValue = Bimer::getPassword();
+        $this->assertEquals($bimerValue, $envValue);
 
-        $envValue        = getenv(Bimer::BIMER_API_ID);
-        $bimmerValue    = Bimer::getClientId();
-        $this->assertEquals($bimmerValue, $envValue);
+        $envValue = getenv(Bimer::BIMER_API_ID);
+        $bimerValue = Bimer::getClientId();
+        $this->assertEquals($bimerValue, $envValue);
 
-        $envValue        = getenv(Bimer::BIMER_API_SECRET);
-        $bimmerValue    = Bimer::getClientSecret();
-        $this->assertEquals($bimmerValue, $envValue);
+        $envValue = getenv(Bimer::BIMER_API_SECRET);
+        $bimerValue = Bimer::getClientSecret();
+        $this->assertEquals($bimerValue, $envValue);
 
-        $envValue        = getenv(Bimer::BIMER_API_TIMEOUT);
-        $bimmerValue    = Bimer::getTimeout();
-        $this->assertEquals($bimmerValue, $envValue);
+        $envValue = getenv(Bimer::BIMER_API_TIMEOUT);
+        $bimerValue = Bimer::getTimeout();
+        $this->assertEquals($bimerValue, $envValue);
     }
 
     /** @test */
-    public function it_should_set_token()
+    public function setBimerToken()
     {
         $random = (string)rand();
         Bimer::setToken($random);
-        $value = Bimer::getToken();
-        $this->assertEquals($value, $random);
 
-        Bimer::setToken(null);
+        $this->assertEquals(Bimer::getToken(), $random);
+    }
+
+    protected function tearDown(): void
+    {
+        Bimer::setToken();
     }
 }

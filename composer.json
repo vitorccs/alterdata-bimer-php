@@ -14,7 +14,7 @@
     },
     "require-dev": {
         "php": ">=7.3",
-        "phpunit/phpunit": "^6"
+        "phpunit/phpunit": "^8.5"
     },
     "authors": [
         {
@@ -33,6 +33,6 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit --testdox"
     }
 }

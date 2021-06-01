@@ -131,7 +131,7 @@ try {
 
 
 ## Testes
-Caso queira contribuir, por favor, implementar testes de unidade em PHPUnit.
+Caso queira contribuir, por favor, implementar testes em PHPUnit.
 
 Para executar:
 1) Faça uma cópia de phpunit.xml.dist em phpunit.xml na raíz do projeto

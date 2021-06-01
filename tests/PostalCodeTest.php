@@ -8,25 +8,19 @@ use Bimer\PostalCode;
 
 class PostalCodeTest extends ResourceTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->resource = PostalCode::class;
     }
 
-    /**
-     * @test
-     */
-    public function it_should_validate_code()
+    public function testValidateCode()
     {
         $this->expectException(BimerApiException::class);
 
         $this->resource::getByCode('0');
     }
 
-    /**
-     * @test
-     */
-    public function it_should_get_by_code()
+    public function testGetByCode()
     {
         $response = (array)$this->resource::getByCode('01310200');
         $this->assertGreaterThan(0, count($response));

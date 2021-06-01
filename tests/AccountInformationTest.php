@@ -7,32 +7,41 @@ use Bimer\AccountInformation;
 
 class AccountInformationTest extends ResourceTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->resource = AccountInformation::class;
-
-        $this->data = [
-            'description' => 'aa',
-            'id' => '00A00000AA',
-        ];
     }
 
     /**
-     * @test
+     * @dataProvider accountData
      */
-    public function it_should_get_by_description()
+    public function testGetByDescription(array $accountData)
     {
-        $response = $this->resource::getByDescription($this->data['description']);
+        $response = $this->resource::getByDescription($accountData['description']);
 
         $this->assertGreaterThan(0, count($response));
     }
 
     /**
-     * @test
+     * @dataProvider accountData
      */
-    public function it_should_get_by_id()
+    public function testGetById(array $accountData)
     {
-        $accountInformation = $this->resource::find($this->data['id']);
+        $accountInformation = $this->resource::find($accountData['id']);
         $this->assertObjectHasAttribute('Identificador', $accountInformation);
+    }
+
+    /**
+     * Data provider for Account Data
+     */
+    public function accountData(): array
+    {
+        $accountData = (array)json_decode(getenv('DATA_ACCOUNT'));
+
+        return [
+            [
+                $accountData
+            ]
+        ];
     }
 }

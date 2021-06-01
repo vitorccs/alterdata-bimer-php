@@ -7,15 +7,16 @@ use Bimer\PersonCharacteristic;
 
 class PersonCharacteristicTest extends ResourceTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->resource = PersonCharacteristic::class;
     }
 
-    /** @test */
-    public function it_should_retrieve_all_resources()
+    public function testGetArray()
     {
         $response = $this->resource::all();
+
+        $this->assertIsArray($response);
         $this->assertGreaterThan(0, count($response));
     }
 }
