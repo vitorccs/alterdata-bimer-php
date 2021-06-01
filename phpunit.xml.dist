@@ -27,6 +27,11 @@
         <env name="BIMER_API_USER" value="username"/>
         <env name="BIMER_API_PWD" value="password"/>
         <env name="BIMER_API_TIMEOUT" value="30"/>
-        <env name="DATA" value='{"cpfCnpj":"36.462.778/0001-60"}' />
+        <env name="DATA_PERSON" value='{"cpfCnpj":"36.462.778/0001-60"}' />
+        <env name="DATA_INCOME" value='{"CodigoEmpresa":"1","IdentificadorPessoa":"00A0000001","IdentificadorFormaPagamento":"00A0000001","CodigoEnderecoCobranca":"01","IdentificadorNaturezaLancamento":"00A0000001"}' />
+        <env name="DATA_INCOME_BATCH" value='{"CodigoEmpresa":1,"LoteAReceberItemBaixa":[{"IdentificadorFormaPagamento":"00A0000001","IdentificadorTipoBaixa":"00A0000001","IdentificadorContaBancaria":"00A0000001"}]}' />
+        <env name="DATA_ACCOUNT" value='{"description":"teste","id":"00A0000001"}' />
+        <env name="DATA_AREA_TYPE" value='{"description":"RUA","id":"00A0000001"}' />
+        <env name="DATA_ADDRESS" value='{"CEP":"22060020","IdentificadorBairro":"00A0000001","IdentificadorCidade":"00A0000001","IdentificadorTipoLogradouro":"00A0000001","SiglaUnidadeFederativa":"SP"}'/>
     </php>
 </phpunit>
