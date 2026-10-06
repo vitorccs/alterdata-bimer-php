@@ -33,6 +33,8 @@
         }
     },
     "scripts": {
-        "test": "phpunit --testdox"
+        "test": "phpunit --testdox",
+        "test:unit": "phpunit --testdox --testsuite Unit",
+        "test:integration": "phpunit --testdox --testsuite Integration"
     }
 }

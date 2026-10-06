@@ -141,3 +141,10 @@ Para executar:
 ```bash
 composer test
 ```
+
+Os testes estão separados em `tests/Unit` (não acessam a API) e `tests/Integration` (acessam a API). Os testes de integração são ignorados automaticamente enquanto `BIMER_API_URL` não contiver uma URL válida. Também é possível executar cada suíte separadamente:
+
+```bash
+composer test:unit         # somente testes que não acessam a API
+composer test:integration  # somente testes que acessam a API
+```

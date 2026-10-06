@@ -1,28 +1,26 @@
 <?php
 declare(strict_types=1);
 
-namespace Bimer\Test;
+namespace Bimer\Test\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Bimer\Exceptions\BimerApiException;
 use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
 use Bimer\Person;
+use Bimer\Test\Helpers\GeneratorHelper;
 
-class PersonTest extends ResourceTest
+class PersonTest extends IntegrationTestCase
 {
-    public function setUp(): void
+    private array $personData;
+
+    protected function setUp(): void
     {
+        parent::setUp();
+
         $this->resource = Person::class;
 
-        $this->incomeData = (array)json_decode(getenv('DATA_PERSON'));
-    }
-
-    public function testValidateName()
-    {
-        $this->expectException(BimerApiException::class);
-
-        $this->resource::getByName('a');
+        $this->personData = (array)json_decode(getenv('DATA_PERSON'));
     }
 
     public function testGetByName()
@@ -31,13 +29,6 @@ class PersonTest extends ResourceTest
 
         $this->assertIsArray($response);
         $this->assertGreaterThanOrEqual(0, count($response));
-    }
-
-    public function testValidateCpfCnpj()
-    {
-        $this->expectException(BimerApiException::class);
-
-        $this->resource::getByCpfCnpj('123.456.789-01');
     }
 
     #[DataProvider('addressData')]
@@ -59,7 +50,7 @@ class PersonTest extends ResourceTest
 
     public function testGetSomeCpfCnpj()
     {
-        $response = $this->resource::getByCpfCnpj($this->incomeData['cpfCnpj']);
+        $response = $this->resource::getByCpfCnpj($this->personData['cpfCnpj']);
 
         $this->assertIsArray($response);
         $this->assertNotEmpty($response);

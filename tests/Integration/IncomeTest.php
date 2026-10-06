@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Bimer\Test;
+namespace Bimer\Test\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Bimer\Income;
 
-class IncomeTest extends ResourceTest
+class IncomeTest extends IntegrationTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
+        parent::setUp();
+
         $this->resource = Income::class;
     }
 

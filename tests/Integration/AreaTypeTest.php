@@ -1,15 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Bimer\Test;
+namespace Bimer\Test\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Bimer\AreaType;
 
-class AreaTypeTest extends ResourceTest
+class AreaTypeTest extends IntegrationTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
+        parent::setUp();
+
         $this->resource = AreaType::class;
     }
 

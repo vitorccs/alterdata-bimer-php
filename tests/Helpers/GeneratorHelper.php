@@ -1,10 +1,10 @@
 <?php
 
-namespace Bimer\Test;
+namespace Bimer\Test\Helpers;
 
 /**
  * Class GeneratorHelper
- * @package Bimer\Test
+ * @package Bimer\Test\Helpers
  *
  * Source:
  * https://gist.github.com/acfreitas/fb7465c33156ec144513

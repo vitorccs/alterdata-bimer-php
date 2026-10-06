@@ -1,14 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Bimer\Test;
+namespace Bimer\Test\Integration;
 
 use Bimer\PersonCharacteristic;
 
-class PersonCharacteristicTest extends ResourceTest
+class PersonCharacteristicTest extends IntegrationTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
+        parent::setUp();
+
         $this->resource = PersonCharacteristic::class;
     }
 
