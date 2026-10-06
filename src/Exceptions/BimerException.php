@@ -15,7 +15,7 @@ class BimerException extends Exception
      * @param string|null $message
      * @param string|int|null $errorCode
      */
-    public function __construct(string $message = null, $errorCode = null)
+    public function __construct(?string $message = null, $errorCode = null)
     {
         $message = $message ? trim($message) : 'Undefined error';
 

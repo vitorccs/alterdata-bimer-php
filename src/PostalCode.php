@@ -11,23 +11,18 @@ use Bimer\Exceptions\BimerApiException;
 
 class PostalCode extends Resource
 {
-    /**
-     * @return string
-     */
     public static function endpoint(): string
     {
         return 'ceps';
     }
 
     /**
-     * @param $code
-     * @param bool $validate
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function getByCode($code, bool $validate = true)
+    public static function getByCode(string $code,
+                                     bool   $validate = true)
     {
         if ($validate && !Validator::validatePostalCode($code)) {
             throw new BimerApiException('The parameter "code" must be valid');

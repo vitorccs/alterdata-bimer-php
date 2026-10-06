@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Bimer\Http\Bimer;
 
@@ -35,7 +36,7 @@ final class BimerTest extends TestCase
         $this->assertEquals($bimerValue, $envValue);
     }
 
-    /** @test */
+    #[Test]
     public function setBimerToken()
     {
         $random = (string)rand();

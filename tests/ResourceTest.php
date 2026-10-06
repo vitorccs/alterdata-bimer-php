@@ -5,7 +5,7 @@ namespace Bimer\Test;
 
 use PHPUnit\Framework\TestCase;
 
-class ResourceTest extends TestCase
+abstract class ResourceTest extends TestCase
 {
     protected $incomeData;
 

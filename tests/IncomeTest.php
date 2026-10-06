@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Bimer\Income;
 
 class IncomeTest extends ResourceTest
@@ -13,9 +14,7 @@ class IncomeTest extends ResourceTest
         $this->resource = Income::class;
     }
 
-    /**
-     * @dataProvider incomeData
-     */
+    #[DataProvider('incomeData')]
     public function testCreateIncome(array $incomeData)
     {
         $incomeId = Income::create($incomeData);
@@ -23,20 +22,16 @@ class IncomeTest extends ResourceTest
         $this->assertNotEmpty($incomeId);
     }
 
-    /**
-     * @dataProvider incomeData
-     */
+    #[DataProvider('incomeData')]
     public function testGetIncomeById(array $incomeData)
     {
         $incomeId = Income::create($incomeData);
         $income = $this->resource::find($incomeId);
 
-        $this->assertObjectHasAttribute('Identificador', $income);
+        $this->assertObjectHasProperty('Identificador', $income);
     }
 
-    /**
-     * @dataProvider batchData
-     */
+    #[DataProvider('batchData')]
     public function testMakeIncomeBatch(array $incomeData, array $batchData)
     {
         $incomeId = Income::create($incomeData);
@@ -44,13 +39,13 @@ class IncomeTest extends ResourceTest
         $batchData["LoteAReceberItemBaixa"][0]->IdentificadorTituloAReceber = $incomeId;
         $batch = Income::makeBatch($batchData);
 
-        $this->assertObjectHasAttribute('IdentificadorLoteAReceber', $batch);
+        $this->assertObjectHasProperty('IdentificadorLoteAReceber', $batch);
     }
 
     /**
      * Data provider for Income Data
      */
-    public function incomeData(): array
+    public static function incomeData(): array
     {
         $incomeData = array_merge((array)json_decode(getenv('DATA_INCOME')), [
             "NumeroTitulo" => random_int(10000, 999999),
@@ -67,7 +62,7 @@ class IncomeTest extends ResourceTest
     /**
      * Data provider for Batch Data
      */
-    public function batchData(): array
+    public static function batchData(): array
     {
         $incomeData = array_merge((array)json_decode(getenv('DATA_INCOME')), [
             "NumeroTitulo" => random_int(10000, 999999),

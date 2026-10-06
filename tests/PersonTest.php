@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bimer\Test;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Bimer\Exceptions\BimerApiException;
 use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
@@ -39,14 +40,12 @@ class PersonTest extends ResourceTest
         $this->resource::getByCpfCnpj('123.456.789-01');
     }
 
-    /**
-     * @dataProvider addressData
-     */
+    #[DataProvider('addressData')]
     public function testCreatePerson(array $addressData)
     {
         $customer = $this->createCustomer($addressData);
 
-        $this->assertObjectHasAttribute('Identificador', $customer);
+        $this->assertObjectHasProperty('Identificador', $customer);
     }
 
     public function testGetEmptyCpfCnpj()
@@ -66,19 +65,15 @@ class PersonTest extends ResourceTest
         $this->assertNotEmpty($response);
     }
 
-    /**
-     * @dataProvider addressData
-     */
+    #[DataProvider('addressData')]
     public function testGetById(array $addressData)
     {
         $customer = $this->createCustomer($addressData);
         $person = $this->resource::find($customer->Identificador);
-        $this->assertObjectHasAttribute('Identificador', $person);
+        $this->assertObjectHasProperty('Identificador', $person);
     }
 
-    /**
-     * @dataProvider addressData
-     */
+    #[DataProvider('addressData')]
     public function testChangePersonData(array $addressData)
     {
         $customer = $this->createCustomer($addressData);
@@ -106,7 +101,7 @@ class PersonTest extends ResourceTest
     /**
      * Data provider for Address Data
      */
-    public function addressData(): array
+    public static function addressData(): array
     {
         $areaType = (array)json_decode(getenv('DATA_ADDRESS'));
 

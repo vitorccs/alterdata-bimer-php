@@ -149,7 +149,7 @@ class Api
      * @throws BimerApiException
      * @throws BimerRequestException
      */
-    private function checkForErrors(ResponseInterface $response, \stdClass $data = null): void
+    private function checkForErrors(ResponseInterface $response, ?\stdClass $data = null): void
     {
         $code = $response->getStatusCode();
         $statusClass = (int)($code / 100);
@@ -176,7 +176,7 @@ class Api
      * @param \stdClass|null $data
      * @throws BimerApiException
      */
-    private function checkForApiException(\stdClass $data = null): void
+    private function checkForApiException(?\stdClass $data = null): void
     {
         $hasErrors = isset($data->Erros) &&
             isset($data->Erros[0]) &&
@@ -194,7 +194,7 @@ class Api
      * @param \stdClass|null $data
      * @throws BimerRequestException
      */
-    private function checkForRequestException(ResponseInterface $response, \stdClass $data = null): void
+    private function checkForRequestException(ResponseInterface $response, ?\stdClass $data = null): void
     {
         $code = $response->getStatusCode();
         $message = $data->error_description ?? $response->getReasonPhrase();
@@ -206,7 +206,7 @@ class Api
      * @param \stdClass|null $data
      * @return bool
      */
-    private function ignoreException(\stdClass $data = null): bool
+    private function ignoreException(?\stdClass $data = null): bool
     {
         $isGetNotFound = isset($data->Erros) &&
             isset($data->Erros[0]) &&

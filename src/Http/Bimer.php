@@ -228,7 +228,7 @@ class Bimer
     /**
      * @param string|null $token
      */
-    public static function setToken(string $token = null): void
+    public static function setToken(?string $token = null): void
     {
         static::$tokenTimestamp = $token ? time() : 0;
 

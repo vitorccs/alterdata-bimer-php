@@ -26,7 +26,7 @@ class Client extends Guzzle
             'base_uri' => Bimer::getApiUrl(),
             'timeout' => Bimer::getTimeout(),
             'on_stats' => function (TransferStats $stats) use (&$url) {
-                $url = $stats->getEffectiveUri();
+                $url = (string)$stats->getEffectiveUri();
             },
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -56,7 +56,7 @@ class Client extends Guzzle
     /**
      * @param string|null $token
      */
-    public function setToken(string $token = null)
+    public function setToken(?string $token = null)
     {
         Bimer::setToken($token);
     }
