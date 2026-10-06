@@ -2,27 +2,26 @@
 
 namespace Bimer\Helpers;
 
-
-class Validator
+class CpfCnpjHelper
 {
     /**
      * The CPF chars length
      */
-    CONST CPF_CHARS_LENGTH = 11;
+    const int CPF_CHARS_LENGTH = 11;
 
     /**
      * The CNPJ chars length
      */
-    const CNPJ_CHARS_LENGTH = 14;
-
-    /**
-     * The Postal Code chars length
-     */
-    const POSTAL_CODE_LENGTH = 8;
+    const int CNPJ_CHARS_LENGTH = 14;
 
     public static function unmask(?string $value): string
     {
         return Sanitizer::alphanumericOnly(strtoupper($value ?? ''));
+    }
+
+    public static function validate(?string $value): bool
+    {
+        return self::validateCpf($value) || self::validateCnpj($value);
     }
 
     public static function validateCnpj(?string $cnpj): bool
@@ -84,16 +83,5 @@ class Validator
         }
 
         return true;
-    }
-
-    public static function validateCpfCnpj(?string $value): bool
-    {
-        return self::validateCpf($value) || self::validateCnpj($value);
-    }
-
-    public static function validatePostalCode(?string $value): bool
-    {
-        $value = Sanitizer::cleanNumeric($value);
-        return strlen($value) === self::POSTAL_CODE_LENGTH;
     }
 }

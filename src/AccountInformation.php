@@ -9,23 +9,18 @@ use Bimer\Http\Resource;
 
 class AccountInformation extends Resource
 {
-    /**
-     * @return string
-     */
     public static function endpoint(): string
     {
         return 'naturezasLancamento';
     }
 
     /**
-     * @param string $description
-     * @param bool $anyPart
-     * @return array
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function getByDescription(string $description, bool $anyPart = true)
+    public static function getByDescription(string $description,
+                                            bool $anyPart = true): array
     {
         if (strlen($description) < 1) {
             throw new BimerApiException('The parameter "description" is required');

@@ -13,11 +13,4 @@ class Sanitizer
     {
         return preg_replace("/[^0-9A-Z]/i", '', $value);
     }
-
-    public static function formatPostalCode(string $code): string
-    {
-        $code = static::cleanNumeric($code);
-
-        return substr($code, 0, 5) .'-'. substr($code, -3);
-    }
 }
