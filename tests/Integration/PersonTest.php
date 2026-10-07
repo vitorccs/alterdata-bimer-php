@@ -8,7 +8,7 @@ use Bimer\Exceptions\BimerApiException;
 use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
 use Bimer\Person;
-use Bimer\Test\Helpers\GeneratorHelper;
+use Faker\Factory;
 
 class PersonTest extends IntegrationTestCase
 {
@@ -41,7 +41,7 @@ class PersonTest extends IntegrationTestCase
 
     public function testGetEmptyCpfCnpj()
     {
-        $randomCpf = GeneratorHelper::cpfRandom(false);
+        $randomCpf = Factory::create('pt_BR')->cpf(false);
         $response = $this->resource::getByCpfCnpj($randomCpf);
 
         $this->assertIsArray($response);
@@ -114,7 +114,7 @@ class PersonTest extends IntegrationTestCase
     {
         return \Bimer\Customer::create([
             'Nome' => 'Customer #' . rand(),
-            'CpfCnpj' => GeneratorHelper::cpfRandom(false),
+            'CpfCnpj' => Factory::create('pt_BR')->cpf(false),
             'Enderecos' => [
                 array_merge($addressData, [
                     'Codigo' => '01',
