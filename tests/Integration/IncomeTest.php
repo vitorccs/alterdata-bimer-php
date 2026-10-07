@@ -51,7 +51,10 @@ class IncomeTest extends IntegrationTestCase
     {
         $incomeData = array_merge((array)json_decode(getenv('DATA_INCOME')), [
             "NumeroTitulo" => random_int(10000, 999999),
-            "ValorTitulo" => 100
+            "ValorTitulo" => 100,
+            "DataReferencia" => date('Y-m-d H:i:s'),
+            "DataEmissao" => date('Y-m-d H:i:s'),
+            "DataVencimento" => date('Y-m-d H:i:s', strtotime('+5 days')),
         ]);
 
         return [
@@ -68,7 +71,10 @@ class IncomeTest extends IntegrationTestCase
     {
         $incomeData = array_merge((array)json_decode(getenv('DATA_INCOME')), [
             "NumeroTitulo" => random_int(10000, 999999),
-            "ValorTitulo" => 100
+            "ValorTitulo" => 100,
+            "DataReferencia" => date('Y-m-d H:i:s'),
+            "DataEmissao" => date('Y-m-d H:i:s'),
+            "DataVencimento" => date('Y-m-d H:i:s', strtotime('+5 days')),
         ]);
 
         $batchData = (array)json_decode(getenv('DATA_INCOME_BATCH'));

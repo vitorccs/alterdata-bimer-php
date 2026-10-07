@@ -135,7 +135,7 @@ class Api
      * @throws BimerRequestException
      */
     private function checkForErrors(ResponseInterface $response,
-                                    mixed $data): void
+                                    mixed             $data): void
     {
         $statusClass = intdiv($response->getStatusCode(), 100);
 
@@ -228,8 +228,9 @@ class Api
      * @throws BimerApiException
      * @throws BimerParameterException
      */
-    public function delete(string $endpoint, array $options = []): mixed
+    public function delete(string $endpoint,
+                           array  $options = []): mixed
     {
-        return $this->request('PUT', $endpoint, $options);
+        return $this->request('DELETE', $endpoint, $options);
     }
 }

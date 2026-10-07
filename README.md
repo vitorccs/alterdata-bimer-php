@@ -4,7 +4,7 @@ SDK PHP para a API do Alterdata Bimer
 
 ## Descrição
 SDK em PHP para integração com os serviços de API do ERP Alterdata Bimer.
-Documentação da API Alterdata Bimer: https://bimersandbox.alterdata.com.br/#/.
+Documentação da API Alterdata Bimer: https://bimer-api-docs.alterdata.com.br.
 
 
 ## Instalação
@@ -12,7 +12,6 @@ Via Composer
 ```bash
 composer require vitorccs/alterdata-bimer-php
 ```
-
 
 ## Métodos disponíveis
 All: Buscar objetos. Retorna array de objetos.
@@ -25,12 +24,12 @@ Find: Encontrar objetos por ID. Retorna objeto.
 $person = \Bimer\Person::find($strId);
 ```
 
-Create - Criar novo objeto. Retorna objeto criado.
+Create: Criar novo objeto. Retorna objeto criado.
 ```php
 $customer = \Bimer\Customer::create($arrayData);
 ```
 
-Update - Atualiza objeto. Retorna objeto atualizado.
+Update: Atualiza objeto. Retorna objeto atualizado.
 ```php
 $person = \Bimer\Person::update($strId, $arrayData);
 ```
@@ -79,25 +78,25 @@ use Bimer\Exceptions\BimerApiException;
 use Bimer\Exceptions\BimerRequestException;
 
 try {
-    $characteristics = Bimer\PersonCharacteristic::all();
+    $characteristics = \Bimer\PersonCharacteristic::all();
     print_r($characteristics); // array of objects
 
-    $person = Bimer\Person::find('00A0000SQ4');
+    $person = \Bimer\Person::find('00A0000SQ4');
     print_r($person); // object
 
-    $person = Bimer\Person::update('00A0000SQ4', [
+    $person = \Bimer\Person::update('00A0000SQ4', [
        'Nome' => 'Nome Completo2',
        'NomeCurto' => 'Nome Curto2'
     ]);
     print_r($person); // object
 
-    $people = Bimer\Person::getByName('NOME', true);
+    $people = \Bimer\Person::getByName('NOME', true);
     print_r($people); // array of objects
 
     $people = Bimer\Person::getByCpfCnpj('123.456.789-01');
     print_r($people); // array of objects
 
-    $customer = Bimer\Customer::create([
+    $customer = \Bimer\Customer::create([
         'Identificador' => '',
         'IdentificadorRepresentantePrincipal' => '',
         'Tipo' => 'F',
@@ -110,9 +109,9 @@ try {
     print_r($customer); // object
 
 } catch (BimerApiException $e) { // erros retornados pela API Bimer
-    echo sprintf("%s (%s)", $e->getMessage(), $e->getErrorCode());
+    echo sprintf("BimerApiException %s (%s)", $e->getMessage(), $e->getErrorCode());
 } catch (BimerRequestException $e) { // erros de servidor (erros HTTP 4xx e 5xx)
-    echo sprintf("%s (%s)", $e->getMessage(), $e->getErrorCode());
+    echo sprintf("BimerRequestException %s (%s)", $e->getMessage(), $e->getErrorCode());
 } catch (\Exception $e) { // demais erros
     echo $e->getMessage();
 }
@@ -135,7 +134,7 @@ try {
 Caso queira contribuir, por favor, implementar testes em PHPUnit.
 
 Para executar:
-1) Faça uma cópia de phpunit.xml.dist em phpunit.xml na raíz do projeto
+1) Faça uma cópia de `phpunit.xml.dist` em `phpunit.xml` na raíz do projeto
 2) Altere os parâmetros ENV com os dados de seu acesso
 3) Execute o comando abaixo no terminal dentro da pasta deste projeto:
 

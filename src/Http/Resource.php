@@ -22,12 +22,14 @@ abstract class Resource
     /**
      * Get array of objects
      *
+     * This method attempts to normalize response to array format
+     *
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
     public static function all(array  $params = [],
-                               string $endpoint = ''): array
+                               string $endpoint = ''): mixed
     {
         return static::get($endpoint, $params, false);
     }
@@ -35,17 +37,20 @@ abstract class Resource
     /**
      * Get element by ID
      *
+     * This method attempts to normalize response to object format
+     *
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function find(string|int $id): ?object
+    public static function find(string|int $id): mixed
     {
         return static::get((string)$id);
     }
 
     /**
-     * Make a GET request, returning a single element or an array of elements
+     * This method attempts to normalize response to object array
+     * format (multiple items found) or object format (one item found)
      *
      * @throws BimerApiException
      * @throws BimerRequestException
@@ -53,7 +58,7 @@ abstract class Resource
      */
     public static function get(string $endpoint = '',
                                array  $params = [],
-                               bool   $single = true): object|array|null
+                               bool   $single = true): mixed
     {
         $data = static::api()->get($endpoint, ['query' => $params]);
 
@@ -63,11 +68,13 @@ abstract class Resource
     /**
      * Create or Update element
      *
+     * This method attempts to normalize response to object format
+     *
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function save(array $params): ?object
+    public static function save(array $params): mixed
     {
         if (!isset($params['Identificador'])) {
             return static::create($params);
@@ -80,9 +87,14 @@ abstract class Resource
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
+     *
+     * This method attempts to normalize response to object format
+     *
+     * NOTE: some endpoints like Income (titulosAReceber) returns
+     * the object ID (string) instead of the object (!)
      */
     public static function create(array  $params,
-                                  string $endpoint = ''): ?object
+                                  string $endpoint = ''): mixed
     {
         $data = static::api()->post($endpoint, ['json' => $params]);
 
@@ -93,8 +105,14 @@ abstract class Resource
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
+     *
+     * This method attempts to normalize response to object format
+     *
+     * NOTE: some endpoints like Income (titulosAReceber) returns
+     * the object ID (string) instead of the object (!)
      */
-    public static function update(string $id, array $params): ?object
+    public static function update(string $id,
+                                  array  $params): mixed
     {
         $data = static::api()->put($id, ['json' => $params]);
 
@@ -105,9 +123,11 @@ abstract class Resource
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
+     *
+     * This method attempts to normalize response to object format
      */
     public static function delete(string $id,
-                                  array  $params = []): ?object
+                                  array  $params = []): mixed
     {
         $data = static::api()->delete($id, ['json' => $params]);
 
@@ -118,7 +138,7 @@ abstract class Resource
      * Normalize Response Data into an array of elements or a single element
      */
     private static function normalizeData(mixed $response,
-                                          bool  $single = true): object|array|null
+                                          bool  $single = true): mixed
     {
         $list = $response->ListaObjetos ?? null;
         $array = is_array($list) ? $list : [];
