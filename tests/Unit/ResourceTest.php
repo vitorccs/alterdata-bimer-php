@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class ResourceTest extends TestCase
 {
     #[DataProvider('resources')]
-    public function testEndpoint(string $resource)
+    public function testEndpoint(string $resource): void
     {
         $this->assertNotEmpty($resource::endpoint());
     }

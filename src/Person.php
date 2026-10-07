@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer;
 
@@ -21,7 +22,7 @@ class Person extends Resource
      * @throws BimerParameterException
      */
     public static function getByName(string $name,
-                                     bool $anyPart = true): array
+                                     bool   $anyPart = true): array
     {
         // Bimer API does not validate "name" parameter. So an empty "name"
         // parameter combined with "anyPart" might try to return the entire table!

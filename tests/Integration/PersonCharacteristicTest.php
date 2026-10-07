@@ -14,7 +14,7 @@ class PersonCharacteristicTest extends IntegrationTestCase
         $this->resource = PersonCharacteristic::class;
     }
 
-    public function testGetArray()
+    public function testGetArray(): void
     {
         $response = $this->resource::all();
 

@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class CustomerTest extends TestCase
 {
-    public function testCreateCustomer()
+    public function testCreateCustomer(): void
     {
         $invalidParameters = [];
         $this->expectException(BimerApiException::class);

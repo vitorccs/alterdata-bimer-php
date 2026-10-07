@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer;
 
@@ -22,7 +23,7 @@ class AreaType extends Resource
     public static function getByDescription(string $description,
                                             bool   $anyPart = true): array
     {
-        if (strlen($description) < 1) {
+        if ($description === '') {
             throw new BimerApiException('The parameter "description" is required');
         }
 
@@ -31,6 +32,6 @@ class AreaType extends Resource
             'porTrecho' => ($anyPart ? 'true' : 'false')
         ];
 
-        return static::all($params, "porDescricao");
+        return static::all($params, 'porDescricao');
     }
 }

@@ -23,7 +23,7 @@ class PersonTest extends IntegrationTestCase
         $this->personData = (array)json_decode(getenv('DATA_PERSON'));
     }
 
-    public function testGetByName()
+    public function testGetByName(): void
     {
         $response = $this->resource::getByName('NOME');
 
@@ -32,14 +32,14 @@ class PersonTest extends IntegrationTestCase
     }
 
     #[DataProvider('addressData')]
-    public function testCreatePerson(array $addressData)
+    public function testCreatePerson(array $addressData): void
     {
         $customer = $this->createCustomer($addressData);
 
         $this->assertObjectHasProperty('Identificador', $customer);
     }
 
-    public function testGetEmptyCpfCnpj()
+    public function testGetEmptyCpfCnpj(): void
     {
         $randomCpf = Factory::create('pt_BR')->cpf(false);
         $response = $this->resource::getByCpfCnpj($randomCpf);
@@ -48,7 +48,7 @@ class PersonTest extends IntegrationTestCase
         $this->assertEmpty($response);
     }
 
-    public function testGetSomeCpfCnpj()
+    public function testGetSomeCpfCnpj(): void
     {
         $response = $this->resource::getByCpfCnpj($this->personData['cpfCnpj']);
 
@@ -57,7 +57,7 @@ class PersonTest extends IntegrationTestCase
     }
 
     #[DataProvider('addressData')]
-    public function testGetById(array $addressData)
+    public function testGetById(array $addressData): void
     {
         $customer = $this->createCustomer($addressData);
         $person = $this->resource::find($customer->Identificador);
@@ -65,7 +65,7 @@ class PersonTest extends IntegrationTestCase
     }
 
     #[DataProvider('addressData')]
-    public function testChangePersonData(array $addressData)
+    public function testChangePersonData(array $addressData): void
     {
         $customer = $this->createCustomer($addressData);
 

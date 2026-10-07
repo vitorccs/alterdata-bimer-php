@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer\Http;
 
@@ -8,13 +9,10 @@ use Bimer\Exceptions\BimerRequestException;
 
 abstract class Resource
 {
-    /**
-     * @return string
-     */
     abstract public static function endpoint(): string;
 
     /**
-     * @return Api
+     * @throws BimerParameterException
      */
     public static function api(): Api
     {
@@ -24,14 +22,12 @@ abstract class Resource
     /**
      * Get array of objects
      *
-     * @param array $params
-     * @param string $endpoint
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function all(array $params = [], string $endpoint = '')
+    public static function all(array  $params = [],
+                               string $endpoint = ''): array
     {
         return static::get($endpoint, $params, false);
     }
@@ -39,65 +35,54 @@ abstract class Resource
     /**
      * Get element by ID
      *
-     * @param $id
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function find($id)
+    public static function find(string|int $id): ?object
     {
-        return static::get($id);
+        return static::get((string)$id);
     }
 
     /**
-     * Make a GET connection
+     * Make a GET request, returning a single element or an array of elements
      *
-     * @param string $endpoint
-     * @param array $params
-     * @param bool $single
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function get(string $endpoint = '', array $params = [], bool $single = true)
+    public static function get(string $endpoint = '',
+                               array  $params = [],
+                               bool   $single = true): object|array|null
     {
         $data = static::api()->get($endpoint, ['query' => $params]);
 
         return static::normalizeData($data, $single);
     }
 
-
     /**
      * Create or Update element
      *
-     * @param array $params
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function save(array $params)
+    public static function save(array $params): ?object
     {
         if (!isset($params['Identificador'])) {
             return static::create($params);
         }
 
-        return static::update($params['Identificador'], $params);
+        return static::update((string)$params['Identificador'], $params);
     }
 
     /**
-     * Create element
-     *
-     * @param array $params
-     * @param string $endpoint
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function create(array $params, string $endpoint = '')
+    public static function create(array  $params,
+                                  string $endpoint = ''): ?object
     {
         $data = static::api()->post($endpoint, ['json' => $params]);
 
@@ -105,16 +90,11 @@ abstract class Resource
     }
 
     /**
-     * Update element by ID
-     *
-     * @param string $id
-     * @param array $params
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function update(string $id, array $params)
+    public static function update(string $id, array $params): ?object
     {
         $data = static::api()->put($id, ['json' => $params]);
 
@@ -122,16 +102,12 @@ abstract class Resource
     }
 
     /**
-     * Delete element by ID
-     *
-     * @param string $id
-     * @param array $params
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function delete(string $id, array $params = [])
+    public static function delete(string $id,
+                                  array  $params = []): ?object
     {
         $data = static::api()->delete($id, ['json' => $params]);
 
@@ -140,18 +116,13 @@ abstract class Resource
 
     /**
      * Normalize Response Data into an array of elements or a single element
-     *
-     * @param mixed $response
-     * @param bool $single
-     * @return mixed
      */
-    private static function normalizeData($response, bool $single = true)
+    private static function normalizeData(mixed $response,
+                                          bool  $single = true): object|array|null
     {
-        $isArray = isset($response->ListaObjetos) && is_array($response->ListaObjetos);
+        $list = $response->ListaObjetos ?? null;
+        $array = is_array($list) ? $list : [];
 
-        $array = $isArray ? $response->ListaObjetos : [];
-        $item = reset($array) ? reset($array) : null;
-
-        return $single ? $item : $array;
+        return $single ? ($array[0] ?? null) : $array;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer;
 
@@ -19,8 +20,8 @@ class Income extends Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function makeBatch(array $params): object
+    public static function makeBatch(array $params): ?object
     {
-        return static::create($params, "lote/baixas");
+        return static::create($params, 'lote/baixas');
     }
 }

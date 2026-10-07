@@ -17,7 +17,7 @@ class IncomeTest extends IntegrationTestCase
     }
 
     #[DataProvider('incomeData')]
-    public function testCreateIncome(array $incomeData)
+    public function testCreateIncome(array $incomeData): void
     {
         $incomeId = Income::create($incomeData);
 
@@ -25,7 +25,7 @@ class IncomeTest extends IntegrationTestCase
     }
 
     #[DataProvider('incomeData')]
-    public function testGetIncomeById(array $incomeData)
+    public function testGetIncomeById(array $incomeData): void
     {
         $incomeId = Income::create($incomeData);
         $income = $this->resource::find($incomeId);
@@ -34,7 +34,7 @@ class IncomeTest extends IntegrationTestCase
     }
 
     #[DataProvider('batchData')]
-    public function testMakeIncomeBatch(array $incomeData, array $batchData)
+    public function testMakeIncomeBatch(array $incomeData, array $batchData): void
     {
         $incomeId = Income::create($incomeData);
 

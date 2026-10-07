@@ -14,7 +14,7 @@ class PostalCodeTest extends IntegrationTestCase
         $this->resource = PostalCode::class;
     }
 
-    public function testGetByCode()
+    public function testGetByCode(): void
     {
         $response = (array)$this->resource::getByCode('01310200');
         $this->assertGreaterThan(0, count($response));

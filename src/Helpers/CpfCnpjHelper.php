@@ -1,17 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer\Helpers;
 
 class CpfCnpjHelper
 {
-    /**
-     * The CPF chars length
-     */
     const int CPF_CHARS_LENGTH = 11;
 
-    /**
-     * The CNPJ chars length
-     */
     const int CNPJ_CHARS_LENGTH = 14;
 
     public static function unmask(?string $value): string
@@ -38,7 +33,7 @@ class CpfCnpjHelper
             return false;
         }
 
-        $checkDigit = function ($pos) use ($cnpj) {
+        $checkDigit = function (int $pos) use ($cnpj): bool {
             $weights = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
             $asciiOffset = 48; // '0' => 0, '9' => 9, 'A' => 17, 'Z' => 42
             $sum = 0;

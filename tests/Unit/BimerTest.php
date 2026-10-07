@@ -9,7 +9,7 @@ use Bimer\Http\Bimer;
 
 final class BimerTest extends TestCase
 {
-    public function testSetBimerParameters()
+    public function testSetBimerParameters(): void
     {
         $envValue = getenv(Bimer::BIMER_API_URL);
         $bimerValue = Bimer::getApiUrl();
@@ -36,7 +36,7 @@ final class BimerTest extends TestCase
         $this->assertEquals($bimerValue, $envValue);
     }
 
-    public function testSetBimerToken()
+    public function testSetBimerToken(): void
     {
         $random = (string)rand();
         Bimer::setToken($random);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer;
 
@@ -20,7 +21,7 @@ class Customer extends Resource
      * @throws BimerParameterException
      */
     public static function create(array  $params,
-                                  string $endpoint = ''): object
+                                  string $endpoint = ''): ?object
     {
         // NOTE: Bimer API makes no parameters validation
         // In case of invalid data, the HTTP will fail with 500 error code
@@ -28,6 +29,6 @@ class Customer extends Resource
             throw new BimerApiException('The parameter "Nome" is mandatory');
         }
 
-        return parent::create($params);
+        return parent::create($params, $endpoint);
     }
 }

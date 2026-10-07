@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer;
 
@@ -21,7 +22,7 @@ class PostalCode extends Resource
      * @throws BimerParameterException
      */
     public static function getByCode(string $code,
-                                     bool   $validate = true)
+                                     bool   $validate = true): ?object
     {
         if ($validate && !PostalCodeHelper::validate($code)) {
             throw new BimerApiException('The parameter "code" must be valid');

@@ -10,19 +10,19 @@ use PHPUnit\Framework\TestCase;
 class PostalCodeHelperTest extends TestCase
 {
     #[DataProvider('unmaskData')]
-    public function testUnmask(?string $value, string $expected)
+    public function testUnmask(?string $value, string $expected): void
     {
         $this->assertSame($expected, PostalCodeHelper::unmask($value));
     }
 
     #[DataProvider('validateData')]
-    public function testValidate(?string $value, bool $expected)
+    public function testValidate(?string $value, bool $expected): void
     {
         $this->assertSame($expected, PostalCodeHelper::validate($value));
     }
 
     #[DataProvider('applyMaskData')]
-    public function testApplyMask(?string $value, string $expected)
+    public function testApplyMask(?string $value, string $expected): void
     {
         $this->assertSame($expected, PostalCodeHelper::applyMask($value));
     }

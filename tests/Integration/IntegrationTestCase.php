@@ -12,7 +12,8 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class IntegrationTestCase extends TestCase
 {
-    protected $resource;
+    /** @var class-string<\Bimer\Http\Resource> */
+    protected string $resource;
 
     protected function setUp(): void
     {

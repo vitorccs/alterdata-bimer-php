@@ -16,7 +16,7 @@ class AccountInformationTest extends IntegrationTestCase
     }
 
     #[DataProvider('accountData')]
-    public function testGetByDescription(array $accountData)
+    public function testGetByDescription(array $accountData): void
     {
         $response = $this->resource::getByDescription($accountData['description']);
 
@@ -24,7 +24,7 @@ class AccountInformationTest extends IntegrationTestCase
     }
 
     #[DataProvider('accountData')]
-    public function testGetById(array $accountData)
+    public function testGetById(array $accountData): void
     {
         $accountInformation = $this->resource::find($accountData['id']);
         $this->assertObjectHasProperty('Identificador', $accountInformation);

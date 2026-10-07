@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer;
 
@@ -20,9 +21,9 @@ class AccountInformation extends Resource
      * @throws BimerParameterException
      */
     public static function getByDescription(string $description,
-                                            bool $anyPart = true): array
+                                            bool   $anyPart = true): array
     {
-        if (strlen($description) < 1) {
+        if ($description === '') {
             throw new BimerApiException('The parameter "description" is required');
         }
 

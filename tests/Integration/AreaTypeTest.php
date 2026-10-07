@@ -16,7 +16,7 @@ class AreaTypeTest extends IntegrationTestCase
     }
 
     #[DataProvider('areaTypeData')]
-    public function testGetByDescription(array $areaType)
+    public function testGetByDescription(array $areaType): void
     {
         $response = $this->resource::getByDescription($areaType['description']);
 
@@ -24,7 +24,7 @@ class AreaTypeTest extends IntegrationTestCase
     }
 
     #[DataProvider('areaTypeData')]
-    public function testGetById(array $areaType)
+    public function testGetById(array $areaType): void
     {
         $accountInformation = $this->resource::find($areaType['id']);
 

@@ -9,14 +9,14 @@ use PHPUnit\Framework\TestCase;
 
 class PersonTest extends TestCase
 {
-    public function testValidateName()
+    public function testValidateName(): void
     {
         $this->expectException(BimerApiException::class);
 
         Person::getByName('a');
     }
 
-    public function testValidateCpfCnpj()
+    public function testValidateCpfCnpj(): void
     {
         $this->expectException(BimerApiException::class);
 

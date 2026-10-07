@@ -1,12 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer\Helpers;
 
 class PostalCodeHelper
 {
-    /**
-     * The Postal Code chars length
-     */
     const int POSTAL_CODE_LENGTH = 8;
 
     public static function unmask(?string $value): string

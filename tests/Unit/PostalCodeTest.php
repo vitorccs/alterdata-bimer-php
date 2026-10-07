@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class PostalCodeTest extends TestCase
 {
-    public function testValidateCode()
+    public function testValidateCode(): void
     {
         $this->expectException(BimerApiException::class);
 
