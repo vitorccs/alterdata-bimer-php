@@ -17,47 +17,48 @@ composer require vitorccs/alterdata-bimer-php
 ## Métodos disponíveis
 All: Buscar objetos. Retorna array de objetos.
 ```php
-$person = Bimer\PersonCharacteristic::all();
+$person = \Bimer\PersonCharacteristic::all();
 ```
 
 Find: Encontrar objetos por ID. Retorna objeto.
 ```php
-$person = Bimer\Person::find($strId);
+$person = \Bimer\Person::find($strId);
 ```
 
 Create - Criar novo objeto. Retorna objeto criado.
 ```php
-$customer = Bimer\Customer::create($arrayData);
+$customer = \Bimer\Customer::create($arrayData);
 ```
 
 Update - Atualiza objeto. Retorna objeto atualizado.
 ```php
-$person = Bimer\Person::update($strId, $arrayData);
+$person = \Bimer\Person::update($strId, $arrayData);
 ```
 
 ## Métodos específicos por recurso
 ```php
-$postalCode = Bimer\PostalCode::getByCode('03943000');
-$people = Bimer\Person::getByName('maria', true);
-$people = Bimer\Person::getByCpfCnpj('123.456.789-01');
+$postalCode = \Bimer\PostalCode::getByCode('03943000');
+$people = \Bimer\Person::getByName('maria', true);
+$people = \Bimer\Person::getByCpfCnpj('123.456.789-01');
 ```
 
 ## Variáveis de ambiente
 Os seguintes parâmetros devem ser informados:
-* BIMER_API_URL (URL da API)
-* BIMER_API_ID (ID do cliente)
-* BIMER_API_SECRET (Segredo do cliente)
-* BIMER_API_USER (Usuário)
-* BIMER_API_PWD (Senha)
-* BIMER_API_TIMEOUT (Opcional, padrão 30. Timeout em segundos para estabelecer conexão com a API)
+
+| Parâmetro         | Obrigatório | Descrição                                             |
+|-------------------|-------------|-------------------------------------------------------|
+| BIMER_API_URL     | Sim         | URL da API                                            |
+| BIMER_API_ID      | Sim         | ID do cliente                                         |
+| BIMER_API_SECRET  | Sim         | Segredo do cliente                                    |
+| BIMER_API_USER    | Sim         | Usuário                                               |
+| BIMER_API_PWD     | Sim         | Senha                                                 |
+| BIMER_API_TIMEOUT | Não         | Timeout em segundos da conexão com a API (padrão: 30) |
 
 
 ## Autenticação
-Não é necessário codificar a variável BIMER_API_PWD com MD5, a SDK fará isso automaticamente.
-
-Não é necessário autenticar manualmente, O SDK irá autenticar e obter um token automaticamente.
-
-Cada processo PHP possuirá o seu próprio token de autenticação, sendo reaproveitado até o término da execução do script PHP. Caso esteja executando o PHP sem timeout (ex: CLI), o token será trocado a cada 10 minutos. Desta forma, evitamos sobrecarga no servidor da API.
+* Não é necessário codificar a variável `BIMER_API_PWD` com MD5, a SDK fará isso automaticamente.
+* Não é necessário autenticar manualmente, O SDK irá autenticar e obter um token automaticamente.
+* Cada processo PHP possuirá o seu próprio token de autenticação, sendo reaproveitado até o término da execução do script PHP. Caso esteja executando o PHP sem timeout (ex: CLI), o token será trocado a cada 10 minutos. Desta forma, evitamos sobrecarga no servidor da API.
 
 
 ## Exemplo de implementação
@@ -135,7 +136,7 @@ Caso queira contribuir, por favor, implementar testes em PHPUnit.
 
 Para executar:
 1) Faça uma cópia de phpunit.xml.dist em phpunit.xml na raíz do projeto
-2) Altere os parâmtros ENV com os dados de seu acesso
+2) Altere os parâmetros ENV com os dados de seu acesso
 3) Execute o comando abaixo no terminal dentro da pasta deste projeto:
 
 ```bash
