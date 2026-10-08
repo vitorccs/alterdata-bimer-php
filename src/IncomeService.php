@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer;
 
@@ -7,25 +8,20 @@ use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
 
-class Income extends Resource
+class IncomeService extends Resource
 {
-    /**
-     * @return string
-     */
-    public static function endpoint(): string
+    public function endpoint(): string
     {
         return 'titulosAReceber';
     }
 
     /**
-     * @param array $params
-     * @return \stdClass
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function makeBatch(array $params)
+    public function makeBatch(array $params): mixed
     {
-        return static::create($params, "lote/baixas");
+        return $this->create($params, 'lote/baixas');
     }
 }

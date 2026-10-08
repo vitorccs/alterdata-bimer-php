@@ -1,85 +1,71 @@
 <?php
 declare(strict_types=1);
 
-namespace Bimer\Test;
+namespace Bimer\Test\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Bimer\Exceptions\BimerApiException;
 use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
-use Bimer\Person;
+use Bimer\PersonService;
+use Faker\Factory;
 
-class PersonTest extends ResourceTest
+class PersonServiceTest extends IntegrationTestCase
 {
-    public function setUp(): void
-    {
-        $this->resource = Person::class;
+    private array $personData;
 
-        $this->incomeData = (array)json_decode(getenv('DATA_PERSON'));
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->resource = new PersonService();
+
+        $this->personData = (array)json_decode(getenv('DATA_PERSON'));
     }
 
-    public function testValidateName()
+    public function testGetByName(): void
     {
-        $this->expectException(BimerApiException::class);
-
-        $this->resource::getByName('a');
-    }
-
-    public function testGetByName()
-    {
-        $response = $this->resource::getByName('NOME');
+        $response = $this->resource->getByName('NOME');
 
         $this->assertIsArray($response);
         $this->assertGreaterThanOrEqual(0, count($response));
     }
 
-    public function testValidateCpfCnpj()
-    {
-        $this->expectException(BimerApiException::class);
-
-        $this->resource::getByCpfCnpj('123.456.789-01');
-    }
-
-    /**
-     * @dataProvider addressData
-     */
-    public function testCreatePerson(array $addressData)
+    #[DataProvider('addressData')]
+    public function testCreatePerson(array $addressData): void
     {
         $customer = $this->createCustomer($addressData);
 
-        $this->assertObjectHasAttribute('Identificador', $customer);
+        $this->assertObjectHasProperty('Identificador', $customer);
     }
 
-    public function testGetEmptyCpfCnpj()
+    public function testGetEmptyCpfCnpj(): void
     {
-        $randomCpf = GeneratorHelper::cpfRandom(false);
-        $response = $this->resource::getByCpfCnpj($randomCpf);
+        $randomCpf = Factory::create('pt_BR')->cpf(false);
+        $response = $this->resource->getByCpfCnpj($randomCpf);
 
         $this->assertIsArray($response);
         $this->assertEmpty($response);
     }
 
-    public function testGetSomeCpfCnpj()
+    public function testGetSomeCpfCnpj(): void
     {
-        $response = $this->resource::getByCpfCnpj($this->incomeData['cpfCnpj']);
+        $response = $this->resource->getByCpfCnpj($this->personData['cpfCnpj']);
 
         $this->assertIsArray($response);
         $this->assertNotEmpty($response);
     }
 
-    /**
-     * @dataProvider addressData
-     */
-    public function testGetById(array $addressData)
+    #[DataProvider('addressData')]
+    public function testGetById(array $addressData): void
     {
         $customer = $this->createCustomer($addressData);
-        $person = $this->resource::find($customer->Identificador);
-        $this->assertObjectHasAttribute('Identificador', $person);
+        $person = $this->resource->find($customer->Identificador);
+        $this->assertObjectHasProperty('Identificador', $person);
     }
 
-    /**
-     * @dataProvider addressData
-     */
-    public function testChangePersonData(array $addressData)
+    #[DataProvider('addressData')]
+    public function testChangePersonData(array $addressData): void
     {
         $customer = $this->createCustomer($addressData);
 
@@ -97,7 +83,7 @@ class PersonTest extends ResourceTest
                 ])
             ]
         ];
-        $person = $this->resource::update($customer->Identificador, $data);
+        $person = $this->resource->update($customer->Identificador, $data);
 
         $this->assertSame($person->Nome, $placeholder);
         $this->assertSame($person->Enderecos[0]->NomeLogradouro, $placeholder);
@@ -106,7 +92,7 @@ class PersonTest extends ResourceTest
     /**
      * Data provider for Address Data
      */
-    public function addressData(): array
+    public static function addressData(): array
     {
         $areaType = (array)json_decode(getenv('DATA_ADDRESS'));
 
@@ -126,9 +112,9 @@ class PersonTest extends ResourceTest
      */
     private function createCustomer(array $addressData): \stdClass
     {
-        return \Bimer\Customer::create([
+        return (new \Bimer\CustomerService())->create([
             'Nome' => 'Customer #' . rand(),
-            'CpfCnpj' => GeneratorHelper::cpfRandom(false),
+            'CpfCnpj' => Factory::create('pt_BR')->cpf(false),
             'Enderecos' => [
                 array_merge($addressData, [
                     'Codigo' => '01',

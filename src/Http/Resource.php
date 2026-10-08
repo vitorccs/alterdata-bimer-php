@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer\Http;
 
@@ -8,150 +9,140 @@ use Bimer\Exceptions\BimerRequestException;
 
 abstract class Resource
 {
-    /**
-     * @return string
-     */
-    abstract public static function endpoint(): string;
+    abstract public function endpoint(): string;
 
     /**
-     * @return Api
+     * @throws BimerParameterException
      */
-    public static function api(): Api
+    public function api(): Api
     {
-        return new Api(static::endpoint());
+        return new Api($this->endpoint());
     }
 
     /**
      * Get array of objects
      *
-     * @param array $params
-     * @param string $endpoint
-     * @return mixed
+     * This method attempts to normalize response to array format
+     *
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function all(array $params = [], string $endpoint = '')
+    public function all(array  $params = [],
+                        string $endpoint = ''): mixed
     {
-        return static::get($endpoint, $params, false);
+        return $this->get($endpoint, $params, false);
     }
 
     /**
      * Get element by ID
      *
-     * @param $id
-     * @return mixed
+     * This method attempts to normalize response to object format
+     *
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function find($id)
+    public function find(string|int $id): mixed
     {
-        return static::get($id);
+        return $this->get((string)$id);
     }
 
     /**
-     * Make a GET connection
+     * This method attempts to normalize response to object array
+     * format (multiple items found) or object format (one item found)
      *
-     * @param string $endpoint
-     * @param array $params
-     * @param bool $single
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function get(string $endpoint = '', array $params = [], bool $single = true)
+    public function get(string $endpoint = '',
+                        array  $params = [],
+                        bool   $single = true): mixed
     {
-        $data = static::api()->get($endpoint, ['query' => $params]);
+        $data = $this->api()->get($endpoint, ['query' => $params]);
 
-        return static::normalizeData($data, $single);
+        return $this->normalizeData($data, $single);
     }
-
 
     /**
      * Create or Update element
      *
-     * @param array $params
-     * @return mixed
+     * This method attempts to normalize response to object format
+     *
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function save(array $params)
+    public function save(array $params): mixed
     {
         if (!isset($params['Identificador'])) {
-            return static::create($params);
+            return $this->create($params);
         }
 
-        return static::update($params['Identificador'], $params);
+        return $this->update((string)$params['Identificador'], $params);
     }
 
     /**
-     * Create element
-     *
-     * @param array $params
-     * @param string $endpoint
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
+     *
+     * This method attempts to normalize response to object format
+     *
+     * NOTE: some endpoints like IncomeService (titulosAReceber) returns
+     * the object ID (string) instead of the object (!)
      */
-    public static function create(array $params, string $endpoint = '')
+    public function create(array  $params,
+                           string $endpoint = ''): mixed
     {
-        $data = static::api()->post($endpoint, ['json' => $params]);
+        $data = $this->api()->post($endpoint, ['json' => $params]);
 
-        return static::normalizeData($data);
+        return $this->normalizeData($data);
     }
 
     /**
-     * Update element by ID
-     *
-     * @param string $id
-     * @param array $params
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
+     *
+     * This method attempts to normalize response to object format
+     *
+     * NOTE: some endpoints like IncomeService (titulosAReceber) returns
+     * the object ID (string) instead of the object (!)
      */
-    public static function update(string $id, array $params)
+    public function update(string $id,
+                           array  $params): mixed
     {
-        $data = static::api()->put($id, ['json' => $params]);
+        $data = $this->api()->put($id, ['json' => $params]);
 
-        return static::normalizeData($data);
+        return $this->normalizeData($data);
     }
 
     /**
-     * Delete element by ID
-     *
-     * @param string $id
-     * @param array $params
-     * @return mixed
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
+     *
+     * This method attempts to normalize response to object format
      */
-    public static function delete(string $id, array $params = [])
+    public function delete(string $id,
+                           array  $params = []): mixed
     {
-        $data = static::api()->delete($id, ['json' => $params]);
+        $data = $this->api()->delete($id, ['json' => $params]);
 
-        return static::normalizeData($data);
+        return $this->normalizeData($data);
     }
 
     /**
      * Normalize Response Data into an array of elements or a single element
-     *
-     * @param mixed $response
-     * @param bool $single
-     * @return mixed
      */
-    private static function normalizeData($response, bool $single = true)
+    private function normalizeData(mixed $response,
+                                   bool  $single = true): mixed
     {
-        $isArray = isset($response->ListaObjetos) && is_array($response->ListaObjetos);
+        $list = $response->ListaObjetos ?? null;
+        $array = is_array($list) ? $list : [];
 
-        $array = $isArray ? $response->ListaObjetos : [];
-        $item = reset($array) ? reset($array) : null;
-
-        return $single ? $item : $array;
+        return $single ? ($array[0] ?? null) : $array;
     }
 }

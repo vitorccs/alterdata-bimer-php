@@ -1,0 +1,26 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install composer dependencies
+        uses: php-actions/composer@v6
+        with:
+          version: 2.x
+          php_version: '8.3'
+          php_extensions: gd bcmath
+          args: --prefer-source
+
+      - name: PHPUnit Tests
+        uses: php-actions/phpunit@v4
+        with:
+          configuration: phpunit.xml.dist
+          testsuite: Unit
+          version: '12.5'
+          php_extensions: gd bcmath

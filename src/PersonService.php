@@ -1,33 +1,28 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer;
 
 use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
-use Bimer\Helpers\Sanitizer;
-use Bimer\Helpers\Validator;
+use Bimer\Helpers\CpfCnpjHelper;
 use Bimer\Exceptions\BimerApiException;
 
-class Person extends Resource
+class PersonService extends Resource
 {
-    /**
-     * @return string
-     */
-    public static function endpoint(): string
+    public function endpoint(): string
     {
         return 'pessoas';
     }
 
     /**
-     * @param string $name
-     * @param bool $anyPart
-     * @return array
      * @throws BimerApiException
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function getByName(string $name, bool $anyPart = true)
+    public function getByName(string $name,
+                              bool   $anyPart = true): array
     {
         // Bimer API does not validate "name" parameter. So an empty "name"
         // parameter combined with "anyPart" might try to return the entire table!
@@ -40,31 +35,29 @@ class Person extends Resource
             'porTrecho' => ($anyPart ? 'true' : 'false')
         ];
 
-        return static::all($params, 'porNome');
+        return $this->all($params, 'porNome');
     }
 
     /**
-     * @param string|int $cpfCnpj
-     * @param bool $validate
-     * @return array
      * @throws BimerApiException
-     * @throws BimerRequestException
      * @throws BimerParameterException
+     * @throws BimerRequestException
      */
-    public static function getByCpfCnpj($cpfCnpj, bool $validate = true)
+    public function getByCpfCnpj(string $cpfCnpj,
+                                 bool   $validate = true): array
     {
         // Bimer API does not validate "cpfCnpj" parameter, so by performing
         // local validation we save server resources
-        if ($validate && !Validator::validateCpfCnpj($cpfCnpj)) {
+        if ($validate && !CpfCnpjHelper::validate($cpfCnpj)) {
             throw new BimerApiException('The parameter "cpfCnpj" must be valid');
         }
 
-        $cpfCnpj = Sanitizer::cleanNumeric($cpfCnpj);
+        $cpfCnpj = CpfCnpjHelper::unmask($cpfCnpj);
 
         $params = [
             'cpfCnpj' => $cpfCnpj
         ];
 
-        return static::all($params);
+        return $this->all($params);
     }
 }

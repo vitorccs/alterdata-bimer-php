@@ -1,68 +1,75 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer\Http;
 
 use Bimer\Exceptions\BimerParameterException;
 use GuzzleHttp\Client as Guzzle;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\TransferStats;
+use Psr\Http\Message\ResponseInterface;
 
-class Client extends Guzzle
+class Client
 {
-    /**
-     * @var string|null
-     */
-    protected $fullUrl;
+    protected ClientInterface $http;
+
+    protected ?string $fullUrl = null;
 
     /**
+     * @param array $config Guzzle request options merged into the defaults
+     * @param ClientInterface|null $http Custom HTTP client (e.g.: for testing)
      * @throws BimerParameterException
      */
-    public function __construct(array $config = [])
+    public function __construct(array $config = [],
+                                ?ClientInterface $http = null)
     {
-        $sdkVersion = Bimer::getSdkVersion();
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        $url = &$this->fullUrl;
-
-        $config = array_merge([
-            'base_uri' => Bimer::getApiUrl(),
-            'timeout' => Bimer::getTimeout(),
-            'on_stats' => function (TransferStats $stats) use (&$url) {
-                $url = $stats->getEffectiveUri();
-            },
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'User-Agent' => "Alterdata-Bimer-PHP/{$sdkVersion};{$host}"
-            ]
-        ], $config);
-
-        parent::__construct($config);
+        $this->http = $http ?? new Guzzle(array_merge($this->defaultConfig(), $config));
     }
 
     /**
-     * @return string|null
+     * @throws GuzzleException
      */
+    public function request(string $method,
+                            string $uri = '',
+                            array  $options = []): ResponseInterface
+    {
+        $this->fullUrl = null;
+
+        $onStats = $options['on_stats'] ?? null;
+
+        $options['on_stats'] = function (TransferStats $stats) use ($onStats) {
+            $this->fullUrl = (string)$stats->getEffectiveUri();
+
+            if (is_callable($onStats)) {
+                $onStats($stats);
+            }
+        };
+
+        return $this->http->request($method, $uri, $options);
+    }
+
+    public function getHttpClient(): ClientInterface
+    {
+        return $this->http;
+    }
+
     public function getToken(): ?string
     {
         return Bimer::getToken();
     }
 
-    /**
-     * @return string|null
-     */
     public function getFullUrl(): ?string
     {
         return $this->fullUrl;
     }
 
-    /**
-     * @param string|null $token
-     */
-    public function setToken(string $token = null)
+    public function setToken(?string $token = null): void
     {
         Bimer::setToken($token);
     }
 
     /**
-     * @return array
      * @throws BimerParameterException
      */
     public function getCredentials(): array
@@ -72,6 +79,24 @@ class Client extends Guzzle
             'password' => Bimer::getPassword(),
             'client_id' => Bimer::getClientId(),
             'client_secret' => Bimer::getClientSecret()
+        ];
+    }
+
+    /**
+     * @throws BimerParameterException
+     */
+    protected function defaultConfig(): array
+    {
+        $sdkVersion = Bimer::getSdkVersion();
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+
+        return [
+            'base_uri' => Bimer::getApiUrl(),
+            'timeout' => Bimer::getTimeout(),
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'User-Agent' => "Alterdata-Bimer-PHP/{$sdkVersion};{$host}"
+            ]
         ];
     }
 }

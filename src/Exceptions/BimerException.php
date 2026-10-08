@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer\Exceptions;
 
@@ -6,28 +7,13 @@ use Exception;
 
 class BimerException extends Exception
 {
-    /**
-     * @var string|int|null
-     */
-    protected $errorCode;
-
-    /**
-     * @param string|null $message
-     * @param string|int|null $errorCode
-     */
-    public function __construct(string $message = null, $errorCode = null)
+    public function __construct(?string                   $message = null,
+                                protected string|int|null $errorCode = null)
     {
-        $message = $message ? trim($message) : 'Undefined error';
-
-        $this->errorCode = $errorCode;
-
-        parent::__construct($message);
+        parent::__construct($message ? trim($message) : 'Undefined error');
     }
 
-    /**
-     * @return int|string|null
-     */
-    public function getErrorCode()
+    public function getErrorCode(): string|int|null
     {
         return $this->errorCode;
     }

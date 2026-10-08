@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bimer\Http;
 
@@ -6,244 +7,130 @@ use Bimer\Exceptions\BimerParameterException;
 
 class Bimer
 {
-    /**
-     *
-     */
-    const BIMER_API_URL = 'BIMER_API_URL';
-    /**
-     *
-     */
-    const BIMER_API_USER = 'BIMER_API_USER';
-    /**
-     *
-     */
-    const BIMER_API_PWD = 'BIMER_API_PWD';
-    /**
-     *
-     */
-    const BIMER_API_ID = 'BIMER_API_ID';
-    /**
-     *
-     */
-    const BIMER_API_SECRET = 'BIMER_API_SECRET';
-    /**
-     *
-     */
-    const BIMER_API_TIMEOUT = 'BIMER_API_TIMEOUT';
+    const string BIMER_API_URL = 'BIMER_API_URL';
+    const string BIMER_API_USER = 'BIMER_API_USER';
+    const string BIMER_API_PWD = 'BIMER_API_PWD';
+    const string BIMER_API_ID = 'BIMER_API_ID';
+    const string BIMER_API_SECRET = 'BIMER_API_SECRET';
+    const string BIMER_API_TIMEOUT = 'BIMER_API_TIMEOUT';
 
     /**
-     * @var string|null
+     * Default HTTP timeout in seconds
      */
-    private static $apiUrl;
-
-    /**
-     * @var string|null
-     */
-    private static $username;
-
-    /**
-     * @var string|null
-     */
-    private static $password;
-
-    /**
-     * @var string|null
-     */
-    private static $clientId;
-
-    /**
-     * @var string|null
-     */
-    private static $clientSecret;
-
-    /**
-     * The HTTP connection timeout
-     *
-     * @var int
-     */
-    private static $timeout;
-
-    /**
-     * Default timeout in seconds
-     *
-     * @var int
-     */
-    private static $defTimeout = 30;
+    const int DEFAULT_TIMEOUT = 30;
 
     /**
      * Token duration in minutes
-     *
-     * @var int
      */
-    private static $tokenDuration = 10;
+    const int TOKEN_DURATION = 10;
 
-    /**
-     * The current token value
-     *
-     * @var string|null
-     */
-    private static $token = null;
+    const string SDK_VERSION = '2.0.0';
 
-    /**
-     * @var string
-     */
-    private static $sdkVersion = "1.2.1";
+    private static ?string $apiUrl = null;
+
+    private static ?string $username = null;
+
+    private static ?string $password = null;
+
+    private static ?string $clientId = null;
+
+    private static ?string $clientSecret = null;
+
+    private static ?int $timeout = null;
+
+    private static ?string $token = null;
 
     /**
      * The timestamp when token was generated
-     *
-     * @var int
      */
-    private static $tokenTimestamp = 0;
+    private static int $tokenTimestamp = 0;
 
     /**
-     * @return string
      * @throws BimerParameterException
      */
     public static function getApiUrl(): string
     {
-        if (!static::$apiUrl) {
-            static::$apiUrl = getenv(static::BIMER_API_URL) ?: null;
-        }
-
-        if (!static::$apiUrl) {
-            throw new BimerParameterException('Missing ' . static::BIMER_API_URL . ' parameter');
-        }
-
-        return static::$apiUrl;
+        return static::$apiUrl ??= static::requireEnv(static::BIMER_API_URL);
     }
 
     /**
-     * @return string
      * @throws BimerParameterException
      */
-    public static function getUsername(): ?string
+    public static function getUsername(): string
     {
-        if (!static::$username) {
-            static::$username = getenv(static::BIMER_API_USER) ?: null;
-        }
-
-        if (!static::$username) {
-            throw new BimerParameterException('Missing ' . static::BIMER_API_USER . ' parameter');
-        }
-
-        return static::$username;
+        return static::$username ??= static::requireEnv(static::BIMER_API_USER);
     }
 
     /**
-     * @return string
      * @throws BimerParameterException
      */
     public static function getPassword(): string
     {
-        if (!static::$password) {
-            static::$password = getenv(static::BIMER_API_PWD) ?: null;
-        }
-
-        if (!static::$password) {
-            throw new BimerParameterException('Missing ' . static::BIMER_API_PWD . ' parameter');
-        }
-
-        return static::$password;
+        return static::$password ??= static::requireEnv(static::BIMER_API_PWD);
     }
 
     /**
-     * @return string
      * @throws BimerParameterException
      */
-    public static function getClientId(): ?string
+    public static function getClientId(): string
     {
-        if (!static::$clientId) {
-            static::$clientId = getenv(static::BIMER_API_ID) ?: null;
-        }
-
-        if (!static::$clientId) {
-            throw new BimerParameterException('Missing ' . static::BIMER_API_ID . ' parameter');
-        }
-
-        return static::$clientId;
+        return static::$clientId ??= static::requireEnv(static::BIMER_API_ID);
     }
 
     /**
-     * @return string
      * @throws BimerParameterException
      */
     public static function getClientSecret(): string
     {
-        if (!static::$clientSecret) {
-            static::$clientSecret = getenv(static::BIMER_API_SECRET) ?: null;
-        }
-
-        if (!static::$clientSecret) {
-            throw new BimerParameterException('Missing ' . static::BIMER_API_SECRET . ' parameter');
-        }
-
-        return static::$clientSecret;
+        return static::$clientSecret ??= static::requireEnv(static::BIMER_API_SECRET);
     }
 
-    /**
-     * @return int
-     */
     public static function getTimeout(): int
     {
-        if (!static::$timeout) {
-            static::$timeout = intval(getenv(static::BIMER_API_TIMEOUT));
-        }
-
-        if (!static::$timeout) {
-            static::$timeout = static::$defTimeout;
-        }
-
-        return static::$timeout;
+        return static::$timeout ??= (int)getenv(static::BIMER_API_TIMEOUT) ?: static::DEFAULT_TIMEOUT;
     }
 
-    /**
-     * @return string
-     */
     public static function getSdkVersion(): string
     {
-        return static::$sdkVersion;
+        return static::SDK_VERSION;
     }
 
-    /**
-     * @return string|null
-     */
     public static function getToken(): ?string
     {
-        if (static::minutesLapsed() >= static::$tokenDuration) {
+        if (static::minutesLapsed() >= static::TOKEN_DURATION) {
             static::expireToken();
         }
 
         return static::$token;
     }
 
-    /**
-     *
-     */
     public static function expireToken(): void
     {
         static::setToken();
     }
 
-    /**
-     * @param string|null $token
-     */
-    public static function setToken(string $token = null): void
+    public static function setToken(?string $token = null): void
     {
         static::$tokenTimestamp = $token ? time() : 0;
-
         static::$token = $token;
     }
 
-    /**
-     * @return float
-     */
     public static function minutesLapsed(): float
     {
-        $toTime = time();
-        $fromTime = static::$tokenTimestamp;
-        $mins = round(abs($toTime - $fromTime) / 60, 2);
+        return round(abs(time() - static::$tokenTimestamp) / 60, 2);
+    }
 
-        return $mins;
+    /**
+     * @throws BimerParameterException
+     */
+    private static function requireEnv(string $name): string
+    {
+        $value = getenv($name);
+
+        if ($value === false || $value === '') {
+            throw new BimerParameterException("Missing {$name} parameter");
+        }
+
+        return $value;
     }
 }
