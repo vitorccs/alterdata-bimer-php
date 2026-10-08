@@ -5,9 +5,9 @@ namespace Bimer;
 
 use Bimer\Http\Resource;
 
-class PersonCharacteristic extends Resource
+class PersonCharacteristicService extends Resource
 {
-    public static function endpoint(): string
+    public function endpoint(): string
     {
         return 'pessoa/caracteristicas';
     }

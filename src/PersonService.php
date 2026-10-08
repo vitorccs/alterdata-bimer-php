@@ -9,9 +9,9 @@ use Bimer\Http\Resource;
 use Bimer\Helpers\CpfCnpjHelper;
 use Bimer\Exceptions\BimerApiException;
 
-class Person extends Resource
+class PersonService extends Resource
 {
-    public static function endpoint(): string
+    public function endpoint(): string
     {
         return 'pessoas';
     }
@@ -21,8 +21,8 @@ class Person extends Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function getByName(string $name,
-                                     bool   $anyPart = true): array
+    public function getByName(string $name,
+                              bool   $anyPart = true): array
     {
         // Bimer API does not validate "name" parameter. So an empty "name"
         // parameter combined with "anyPart" might try to return the entire table!
@@ -35,7 +35,7 @@ class Person extends Resource
             'porTrecho' => ($anyPart ? 'true' : 'false')
         ];
 
-        return static::all($params, 'porNome');
+        return $this->all($params, 'porNome');
     }
 
     /**
@@ -43,8 +43,8 @@ class Person extends Resource
      * @throws BimerParameterException
      * @throws BimerRequestException
      */
-    public static function getByCpfCnpj(string $cpfCnpj,
-                                        bool   $validate = true): array
+    public function getByCpfCnpj(string $cpfCnpj,
+                                 bool   $validate = true): array
     {
         // Bimer API does not validate "cpfCnpj" parameter, so by performing
         // local validation we save server resources
@@ -58,6 +58,6 @@ class Person extends Resource
             'cpfCnpj' => $cpfCnpj
         ];
 
-        return static::all($params);
+        return $this->all($params);
     }
 }

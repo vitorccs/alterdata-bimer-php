@@ -9,9 +9,9 @@ use Bimer\Http\Resource;
 use Bimer\Helpers\PostalCodeHelper;
 use Bimer\Exceptions\BimerApiException;
 
-class PostalCode extends Resource
+class PostalCodeService extends Resource
 {
-    public static function endpoint(): string
+    public function endpoint(): string
     {
         return 'ceps';
     }
@@ -21,8 +21,8 @@ class PostalCode extends Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function getByCode(string $code,
-                                     bool   $validate = true): ?object
+    public function getByCode(string $code,
+                              bool   $validate = true): ?object
     {
         if ($validate && !PostalCodeHelper::validate($code)) {
             throw new BimerApiException('The parameter "code" must be valid');
@@ -30,6 +30,6 @@ class PostalCode extends Resource
 
         $code = PostalCodeHelper::applyMask($code);
 
-        return static::get("codigo/{$code}");
+        return $this->get("codigo/{$code}");
     }
 }

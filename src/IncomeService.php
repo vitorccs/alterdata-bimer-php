@@ -8,9 +8,9 @@ use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
 
-class Income extends Resource
+class IncomeService extends Resource
 {
-    public static function endpoint(): string
+    public function endpoint(): string
     {
         return 'titulosAReceber';
     }
@@ -20,8 +20,8 @@ class Income extends Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function makeBatch(array $params): ?object
+    public function makeBatch(array $params): ?object
     {
-        return static::create($params, 'lote/baixas');
+        return $this->create($params, 'lote/baixas');
     }
 }

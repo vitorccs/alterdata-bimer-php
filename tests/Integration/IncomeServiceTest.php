@@ -5,21 +5,21 @@ declare(strict_types=1);
 namespace Bimer\Test\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use Bimer\Income;
+use Bimer\IncomeService;
 
-class IncomeTest extends IntegrationTestCase
+class IncomeServiceTest extends IntegrationTestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->resource = Income::class;
+        $this->resource = new IncomeService();
     }
 
     #[DataProvider('incomeData')]
     public function testCreateIncome(array $incomeData): void
     {
-        $incomeId = Income::create($incomeData);
+        $incomeId = $this->resource->create($incomeData);
 
         $this->assertNotEmpty($incomeId);
     }
@@ -27,8 +27,8 @@ class IncomeTest extends IntegrationTestCase
     #[DataProvider('incomeData')]
     public function testGetIncomeById(array $incomeData): void
     {
-        $incomeId = Income::create($incomeData);
-        $income = $this->resource::find($incomeId);
+        $incomeId = $this->resource->create($incomeData);
+        $income = $this->resource->find($incomeId);
 
         $this->assertObjectHasProperty('Identificador', $income);
     }
@@ -36,10 +36,10 @@ class IncomeTest extends IntegrationTestCase
     #[DataProvider('batchData')]
     public function testMakeIncomeBatch(array $incomeData, array $batchData): void
     {
-        $incomeId = Income::create($incomeData);
+        $incomeId = $this->resource->create($incomeData);
 
         $batchData["LoteAReceberItemBaixa"][0]->IdentificadorTituloAReceber = $incomeId;
-        $batch = Income::makeBatch($batchData);
+        $batch = $this->resource->makeBatch($batchData);
 
         $this->assertObjectHasProperty('IdentificadorLoteAReceber', $batch);
     }

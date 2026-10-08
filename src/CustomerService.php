@@ -8,9 +8,9 @@ use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
 use Bimer\Exceptions\BimerApiException;
 
-class Customer extends Resource
+class CustomerService extends Resource
 {
-    public static function endpoint(): string
+    public function endpoint(): string
     {
         return 'clientes';
     }
@@ -20,8 +20,8 @@ class Customer extends Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function create(array  $params,
-                                  string $endpoint = ''): ?object
+    public function create(array  $params,
+                           string $endpoint = ''): ?object
     {
         // NOTE: Bimer API makes no parameters validation
         // In case of invalid data, the HTTP will fail with 500 error code

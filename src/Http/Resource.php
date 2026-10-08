@@ -9,14 +9,14 @@ use Bimer\Exceptions\BimerRequestException;
 
 abstract class Resource
 {
-    abstract public static function endpoint(): string;
+    abstract public function endpoint(): string;
 
     /**
      * @throws BimerParameterException
      */
-    public static function api(): Api
+    public function api(): Api
     {
-        return new Api(static::endpoint());
+        return new Api($this->endpoint());
     }
 
     /**
@@ -28,10 +28,10 @@ abstract class Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function all(array  $params = [],
-                               string $endpoint = ''): mixed
+    public function all(array  $params = [],
+                        string $endpoint = ''): mixed
     {
-        return static::get($endpoint, $params, false);
+        return $this->get($endpoint, $params, false);
     }
 
     /**
@@ -43,9 +43,9 @@ abstract class Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function find(string|int $id): mixed
+    public function find(string|int $id): mixed
     {
-        return static::get((string)$id);
+        return $this->get((string)$id);
     }
 
     /**
@@ -56,13 +56,13 @@ abstract class Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function get(string $endpoint = '',
-                               array  $params = [],
-                               bool   $single = true): mixed
+    public function get(string $endpoint = '',
+                        array  $params = [],
+                        bool   $single = true): mixed
     {
-        $data = static::api()->get($endpoint, ['query' => $params]);
+        $data = $this->api()->get($endpoint, ['query' => $params]);
 
-        return static::normalizeData($data, $single);
+        return $this->normalizeData($data, $single);
     }
 
     /**
@@ -74,13 +74,13 @@ abstract class Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function save(array $params): mixed
+    public function save(array $params): mixed
     {
         if (!isset($params['Identificador'])) {
-            return static::create($params);
+            return $this->create($params);
         }
 
-        return static::update((string)$params['Identificador'], $params);
+        return $this->update((string)$params['Identificador'], $params);
     }
 
     /**
@@ -90,15 +90,15 @@ abstract class Resource
      *
      * This method attempts to normalize response to object format
      *
-     * NOTE: some endpoints like Income (titulosAReceber) returns
+     * NOTE: some endpoints like IncomeService (titulosAReceber) returns
      * the object ID (string) instead of the object (!)
      */
-    public static function create(array  $params,
-                                  string $endpoint = ''): mixed
+    public function create(array  $params,
+                           string $endpoint = ''): mixed
     {
-        $data = static::api()->post($endpoint, ['json' => $params]);
+        $data = $this->api()->post($endpoint, ['json' => $params]);
 
-        return static::normalizeData($data);
+        return $this->normalizeData($data);
     }
 
     /**
@@ -108,15 +108,15 @@ abstract class Resource
      *
      * This method attempts to normalize response to object format
      *
-     * NOTE: some endpoints like Income (titulosAReceber) returns
+     * NOTE: some endpoints like IncomeService (titulosAReceber) returns
      * the object ID (string) instead of the object (!)
      */
-    public static function update(string $id,
-                                  array  $params): mixed
+    public function update(string $id,
+                           array  $params): mixed
     {
-        $data = static::api()->put($id, ['json' => $params]);
+        $data = $this->api()->put($id, ['json' => $params]);
 
-        return static::normalizeData($data);
+        return $this->normalizeData($data);
     }
 
     /**
@@ -126,19 +126,19 @@ abstract class Resource
      *
      * This method attempts to normalize response to object format
      */
-    public static function delete(string $id,
-                                  array  $params = []): mixed
+    public function delete(string $id,
+                           array  $params = []): mixed
     {
-        $data = static::api()->delete($id, ['json' => $params]);
+        $data = $this->api()->delete($id, ['json' => $params]);
 
-        return static::normalizeData($data);
+        return $this->normalizeData($data);
     }
 
     /**
      * Normalize Response Data into an array of elements or a single element
      */
-    private static function normalizeData(mixed $response,
-                                          bool  $single = true): mixed
+    private function normalizeData(mixed $response,
+                                   bool  $single = true): mixed
     {
         $list = $response->ListaObjetos ?? null;
         $array = is_array($list) ? $list : [];

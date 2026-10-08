@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bimer\Test\Integration;
 
 use Bimer\Http\Bimer;
+use Bimer\Http\Resource;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,8 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class IntegrationTestCase extends TestCase
 {
-    /** @var class-string<\Bimer\Http\Resource> */
-    protected string $resource;
+    protected Resource $resource;
 
     protected function setUp(): void
     {

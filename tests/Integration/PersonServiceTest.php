@@ -7,10 +7,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Bimer\Exceptions\BimerApiException;
 use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
-use Bimer\Person;
+use Bimer\PersonService;
 use Faker\Factory;
 
-class PersonTest extends IntegrationTestCase
+class PersonServiceTest extends IntegrationTestCase
 {
     private array $personData;
 
@@ -18,14 +18,14 @@ class PersonTest extends IntegrationTestCase
     {
         parent::setUp();
 
-        $this->resource = Person::class;
+        $this->resource = new PersonService();
 
         $this->personData = (array)json_decode(getenv('DATA_PERSON'));
     }
 
     public function testGetByName(): void
     {
-        $response = $this->resource::getByName('NOME');
+        $response = $this->resource->getByName('NOME');
 
         $this->assertIsArray($response);
         $this->assertGreaterThanOrEqual(0, count($response));
@@ -42,7 +42,7 @@ class PersonTest extends IntegrationTestCase
     public function testGetEmptyCpfCnpj(): void
     {
         $randomCpf = Factory::create('pt_BR')->cpf(false);
-        $response = $this->resource::getByCpfCnpj($randomCpf);
+        $response = $this->resource->getByCpfCnpj($randomCpf);
 
         $this->assertIsArray($response);
         $this->assertEmpty($response);
@@ -50,7 +50,7 @@ class PersonTest extends IntegrationTestCase
 
     public function testGetSomeCpfCnpj(): void
     {
-        $response = $this->resource::getByCpfCnpj($this->personData['cpfCnpj']);
+        $response = $this->resource->getByCpfCnpj($this->personData['cpfCnpj']);
 
         $this->assertIsArray($response);
         $this->assertNotEmpty($response);
@@ -60,7 +60,7 @@ class PersonTest extends IntegrationTestCase
     public function testGetById(array $addressData): void
     {
         $customer = $this->createCustomer($addressData);
-        $person = $this->resource::find($customer->Identificador);
+        $person = $this->resource->find($customer->Identificador);
         $this->assertObjectHasProperty('Identificador', $person);
     }
 
@@ -83,7 +83,7 @@ class PersonTest extends IntegrationTestCase
                 ])
             ]
         ];
-        $person = $this->resource::update($customer->Identificador, $data);
+        $person = $this->resource->update($customer->Identificador, $data);
 
         $this->assertSame($person->Nome, $placeholder);
         $this->assertSame($person->Enderecos[0]->NomeLogradouro, $placeholder);
@@ -112,7 +112,7 @@ class PersonTest extends IntegrationTestCase
      */
     private function createCustomer(array $addressData): \stdClass
     {
-        return \Bimer\Customer::create([
+        return (new \Bimer\CustomerService())->create([
             'Nome' => 'Customer #' . rand(),
             'CpfCnpj' => Factory::create('pt_BR')->cpf(false),
             'Enderecos' => [

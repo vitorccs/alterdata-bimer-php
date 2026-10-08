@@ -16,29 +16,29 @@ composer require vitorccs/alterdata-bimer-php
 ## Métodos disponíveis
 All: Buscar objetos. Retorna array de objetos.
 ```php
-$person = \Bimer\PersonCharacteristic::all();
+$person = (new \Bimer\PersonCharacteristicService())->all();
 ```
 
 Find: Encontrar objetos por ID. Retorna objeto.
 ```php
-$person = \Bimer\Person::find($strId);
+$person = (new \Bimer\PersonService())->find($strId);
 ```
 
 Create: Criar novo objeto. Retorna objeto criado.
 ```php
-$customer = \Bimer\Customer::create($arrayData);
+$customer = (new \Bimer\CustomerService())->create($arrayData);
 ```
 
 Update: Atualiza objeto. Retorna objeto atualizado.
 ```php
-$person = \Bimer\Person::update($strId, $arrayData);
+$person = (new \Bimer\PersonService())->update($strId, $arrayData);
 ```
 
 ## Métodos específicos por recurso
 ```php
-$postalCode = \Bimer\PostalCode::getByCode('03943000');
-$people = \Bimer\Person::getByName('maria', true);
-$people = \Bimer\Person::getByCpfCnpj('123.456.789-01');
+$postalCode = (new \Bimer\PostalCodeService())->getByCode('03943000');
+$people = (new \Bimer\PersonService())->getByName('maria', true);
+$people = (new \Bimer\PersonService())->getByCpfCnpj('123.456.789-01');
 ```
 
 ## Variáveis de ambiente
@@ -74,29 +74,43 @@ putenv('BIMER_API_SECRET=client_secret');
 putenv('BIMER_API_USER=username');
 putenv('BIMER_API_PWD=password');
 
+use Bimer\CustomerService;
 use Bimer\Exceptions\BimerApiException;
 use Bimer\Exceptions\BimerRequestException;
+use Bimer\PersonService;
+use Bimer\PersonCharacteristicService;
 
 try {
-    $characteristics = \Bimer\PersonCharacteristic::all();
+    // define serviços
+    $personCharacteristicService = new PersonCharacteristicService();
+    $personService = new PersonService();
+    $customerService = new CustomerService();
+
+    // obter lista de Características
+    $characteristics = $personCharacteristicService->all();
     print_r($characteristics); // array of objects
 
-    $person = \Bimer\Person::find('00A0000SQ4');
+    // encontrar Pessoa por ID
+    $person = $personService->find('00A0000SQ4');
     print_r($person); // object
 
-    $person = \Bimer\Person::update('00A0000SQ4', [
-       'Nome' => 'Nome Completo2',
-       'NomeCurto' => 'Nome Curto2'
+    // atualizar Pessoa por ID
+    $person = $personService->update('00A0000SQ4', [
+        'Nome' => 'Nome Completo2',
+        'NomeCurto' => 'Nome Curto2'
     ]);
     print_r($person); // object
 
-    $people = \Bimer\Person::getByName('NOME', true);
+    // encontrar pessoa por nome
+    $people = $personService->getByName('NOME', true);
     print_r($people); // array of objects
 
-    $people = Bimer\Person::getByCpfCnpj('123.456.789-01');
+    // encontrar pessoa por CPF ou CNPJ
+    $people = $personService->getByCpfCnpj('123.456.789-01');
     print_r($people); // array of objects
 
-    $customer = \Bimer\Customer::create([
+    // criar Cliente
+    $customer = $customerService->create([
         'Identificador' => '',
         'IdentificadorRepresentantePrincipal' => '',
         'Tipo' => 'F',
@@ -119,13 +133,13 @@ try {
 
 
 ## Métodos implementados
-* CEP (PostalCode)
-* Cliente (Customer)
-* NaturezaLancamento (AccountInformation)
-* Pessoa (Person)
-* PessoaCaracteristica (PersonCharacteristic)
-* Titulos a Receber (Income)
-* TiposLogradouro (AreaType)
+* CEP (PostalCodeService)
+* Cliente (CustomerService)
+* NaturezaLancamento (AccountInformationService)
+* Pessoa (PersonService)
+* PessoaCaracteristica (PersonCharacteristicService)
+* Titulos a Receber (IncomeService)
+* TiposLogradouro (AreaTypeService)
 
 ... por favor, contribua com mais implementações
 

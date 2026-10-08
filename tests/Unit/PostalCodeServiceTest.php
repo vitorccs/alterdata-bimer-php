@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace Bimer\Test\Unit;
 
-use Bimer\Customer;
 use Bimer\Exceptions\BimerApiException;
+use Bimer\PostalCodeService;
 use PHPUnit\Framework\TestCase;
 
-class CustomerTest extends TestCase
+class PostalCodeServiceTest extends TestCase
 {
-    public function testCreateCustomer(): void
+    public function testValidateCode(): void
     {
-        $invalidParameters = [];
         $this->expectException(BimerApiException::class);
-        Customer::create($invalidParameters);
+
+        (new PostalCodeService())->getByCode('0');
     }
 }

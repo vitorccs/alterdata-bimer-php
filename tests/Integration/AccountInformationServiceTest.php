@@ -4,21 +4,21 @@ declare(strict_types=1);
 namespace Bimer\Test\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use Bimer\AccountInformation;
+use Bimer\AccountInformationService;
 
-class AccountInformationTest extends IntegrationTestCase
+class AccountInformationServiceTest extends IntegrationTestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->resource = AccountInformation::class;
+        $this->resource = new AccountInformationService();
     }
 
     #[DataProvider('accountData')]
     public function testGetByDescription(array $accountData): void
     {
-        $response = $this->resource::getByDescription($accountData['description']);
+        $response = $this->resource->getByDescription($accountData['description']);
 
         $this->assertGreaterThan(0, count($response));
     }
@@ -26,7 +26,7 @@ class AccountInformationTest extends IntegrationTestCase
     #[DataProvider('accountData')]
     public function testGetById(array $accountData): void
     {
-        $accountInformation = $this->resource::find($accountData['id']);
+        $accountInformation = $this->resource->find($accountData['id']);
         $this->assertObjectHasProperty('Identificador', $accountInformation);
     }
 

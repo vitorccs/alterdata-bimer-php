@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace Bimer;
 
-use Bimer\Exceptions\BimerApiException;
 use Bimer\Exceptions\BimerParameterException;
 use Bimer\Exceptions\BimerRequestException;
 use Bimer\Http\Resource;
+use Bimer\Exceptions\BimerApiException;
 
-class AccountInformation extends Resource
+class AreaTypeService extends Resource
 {
-    public static function endpoint(): string
+    public function endpoint(): string
     {
-        return 'naturezasLancamento';
+        return 'tiposLogradouro';
     }
 
     /**
@@ -20,8 +20,8 @@ class AccountInformation extends Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public static function getByDescription(string $description,
-                                            bool   $anyPart = true): array
+    public function getByDescription(string $description,
+                                     bool   $anyPart = true): array
     {
         if ($description === '') {
             throw new BimerApiException('The parameter "description" is required');
@@ -32,6 +32,6 @@ class AccountInformation extends Resource
             'porTrecho' => ($anyPart ? 'true' : 'false')
         ];
 
-        return static::all($params);
+        return $this->all($params, 'porDescricao');
     }
 }
