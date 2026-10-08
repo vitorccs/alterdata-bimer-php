@@ -21,7 +21,7 @@ class AccountInformationService extends Resource
      * @throws BimerParameterException
      */
     public function getByDescription(string $description,
-                                     bool   $anyPart = true): array
+                                     bool   $anyPart = true): mixed
     {
         if ($description === '') {
             throw new BimerApiException('The parameter "description" is required');

@@ -22,7 +22,7 @@ class PostalCodeService extends Resource
      * @throws BimerParameterException
      */
     public function getByCode(string $code,
-                              bool   $validate = true): ?object
+                              bool   $validate = true): mixed
     {
         if ($validate && !PostalCodeHelper::validate($code)) {
             throw new BimerApiException('The parameter "code" must be valid');

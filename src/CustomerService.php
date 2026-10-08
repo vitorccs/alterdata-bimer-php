@@ -21,7 +21,7 @@ class CustomerService extends Resource
      * @throws BimerParameterException
      */
     public function create(array  $params,
-                           string $endpoint = ''): ?object
+                           string $endpoint = ''): mixed
     {
         // NOTE: Bimer API makes no parameters validation
         // In case of invalid data, the HTTP will fail with 500 error code

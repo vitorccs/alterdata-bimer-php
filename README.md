@@ -111,10 +111,7 @@ try {
 
     // criar Cliente
     $customer = $customerService->create([
-        'Identificador' => '',
-        'IdentificadorRepresentantePrincipal' => '',
         'Tipo' => 'F',
-        'Codigo' => '',
         'CpfCnpj' => '01234567894',
         'DataNascimento' => '1980-04-26T00:00:00:000Z',
         'Nome' => 'Nome Completo',

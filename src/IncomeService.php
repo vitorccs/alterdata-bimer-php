@@ -20,7 +20,7 @@ class IncomeService extends Resource
      * @throws BimerRequestException
      * @throws BimerParameterException
      */
-    public function makeBatch(array $params): ?object
+    public function makeBatch(array $params): mixed
     {
         return $this->create($params, 'lote/baixas');
     }
