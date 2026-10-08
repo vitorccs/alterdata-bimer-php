@@ -88,26 +88,26 @@ try {
 
     // obter lista de Características
     $characteristics = $personCharacteristicService->all();
-    print_r($characteristics); // array of objects
+    print_r($characteristics);
 
     // encontrar Pessoa por ID
     $person = $personService->find('00A0000SQ4');
-    print_r($person); // object
+    print_r($person);
 
     // atualizar Pessoa por ID
     $person = $personService->update('00A0000SQ4', [
         'Nome' => 'Nome Completo2',
         'NomeCurto' => 'Nome Curto2'
     ]);
-    print_r($person); // object
+    print_r($person);
 
     // encontrar pessoa por nome
     $people = $personService->getByName('NOME', true);
-    print_r($people); // array of objects
+    print_r($people);
 
     // encontrar pessoa por CPF ou CNPJ
     $people = $personService->getByCpfCnpj('123.456.789-01');
-    print_r($people); // array of objects
+    print_r($people);
 
     // criar Cliente
     $customer = $customerService->create([
@@ -117,7 +117,7 @@ try {
         'Nome' => 'Nome Completo',
         'NomeCurto' => 'Nome Curto'
     ]);
-    print_r($customer); // object
+    print_r($customer);
 
 } catch (BimerApiException $e) { // erros retornados pela API Bimer
     echo sprintf("BimerApiException %s (%s)", $e->getMessage(), $e->getErrorCode());
